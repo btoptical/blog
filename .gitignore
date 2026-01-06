@@ -1,0 +1,12 @@
+# Quarto
+/.quarto/
+/.quarto-cache/
+/_site/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
