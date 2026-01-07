@@ -1,0 +1,22 @@
+project:
+  type: website
+
+website:
+  title: "Infinite Limit"
+  site-url: https://infinitelimit.ai
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: posts/index.qmd
+        text: Writing
+
+execute:
+  enabled: true
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    math: mathjax
+    engine: pdflatex

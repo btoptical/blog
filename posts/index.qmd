@@ -1,0 +1,10 @@
+---
+title: Writing
+listing:
+  contents: .
+  sort: date
+  type: default
+---
+
+Notes and essays.
+
