@@ -4,5 +4,12 @@
     "items": [
       "/posts/2026-01-06-infinite-limit.html"
     ]
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/posts/index.html",
+      "/posts/2026-01-06-infinite-limit.html"
+    ]
   }
 ]

@@ -1,0 +1,9 @@
+---
+title: ""
+listing:
+  contents: posts
+  sort: date desc
+  categories: true
+  page-size: 10
+---
+
