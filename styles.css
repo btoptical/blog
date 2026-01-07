@@ -99,3 +99,8 @@ html[data-bs-theme="dark"] figure svg {
   font-size: 1.2rem;
 }
 
+/* Global navbar logo size */
+.navbar-brand img {
+  height: 36px;   /* try 28–40px */
+  width: auto;
+}

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="160" height="40" viewBox="0 0 160 40">
-  <text x="0" y="28" font-family="STIX Two Math, Latin Modern Math, serif" font-size="28" fill="#111">
+  <text x="0" y="28" font-family="STIX Two Math, Latin Modern Math, serif" font-size="28" fill="currentColor">
     lim<tspan dy="6" font-size="16">n→∞</tspan>
   </text>
 </svg>
