@@ -14,10 +14,9 @@ website:
         text: Home
       - href: posts/index.qmd
         text: Writing
-      - text: |
-          $\lim_{n \to \infty}$&nbsp;&nbsp;<span class="site-wordmark">Infinite&nbsp;Limit</span>
-          href: /
-
+    logo: images/limit-mark.svg
+    logo-alt: "Infinite Limit"
+    logo-href: /
 
 execute:
   enabled: true
