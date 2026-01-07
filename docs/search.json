@@ -1,26 +1,5 @@
 [
   {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Posts",
-    "section": "",
-    "text": "On Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Infinite Limit",
-    "section": "",
-    "text": "Posts\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOn Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
-  },
-  {
     "objectID": "posts/2026-01-06-infinite-limit.html",
     "href": "posts/2026-01-06-infinite-limit.html",
     "title": "On Infinite Limits",
@@ -40,5 +19,19 @@
     "title": "On Infinite Limits",
     "section": "Diagram",
     "text": "Diagram\n\n\n\nPerformance saturates well before theoretical infinity."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Infinite Limit",
+    "section": "",
+    "text": "On Infinite Limits\n\n\n\n\n\nJan 6, 2026\n\n\nReal systems approach limits long before theory reaches infinity.\n\n\n\n\n\nNo matching items"
   }
 ]

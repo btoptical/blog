@@ -3,19 +3,19 @@ project:
   output-dir: docs
   render:
     - "*.qmd"
+    - "posts/*.qmd"
   resources:
     - images
-    - https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
 
 website:
   title: "Infinite Limit"
   site-url: https://infinitelimit.ai
   navbar:
     left:
+      - href: /
+        text: Writing
       - href: about.qmd
         text: About
-      - href: posts/index.qmd
-        text: Writing
     logo: images/logo.svg
     logo-alt: "Infinite Limit"
     logo-href: /
@@ -25,15 +25,15 @@ execute:
 
 format:
   html:
-    mainfont: Inter
-    monofont: JetBrains Mono
     theme:
       light: lux
       dark: darkly
+    mainfont: Inter
+    monofont: JetBrains Mono
     fontsize: 1.05em
     linestretch: 1.6
     toc: true
     code-copy: true
     smooth-scroll: true
     math: mathjax
-    engine: pdflatex
+

@@ -1,9 +1,11 @@
 ---
 title: ""
 listing:
-  contents: posts
+  contents:
+    - posts/*.qmd
   sort: date desc
   categories: true
   page-size: 10
+  fields: [date, title, abstract]
 ---
 
