@@ -81,3 +81,21 @@ html[data-bs-theme="dark"] figure svg {
   border: 1px solid #e5e7eb;
 }
 
+.navbar {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.site-wordmark {
+  font-family: Inter, "Source Sans 3", system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.navbar .math {
+  font-size: 1.2rem;
+}
+
