@@ -19,7 +19,13 @@ execute:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      light: lux
+      dark: darkly
+    fontsize: 1.05em
+    linestretch: 1.6
     toc: true
+    code-copy: true
+    smooth-scroll: true
     math: mathjax
     engine: pdflatex
