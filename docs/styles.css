@@ -187,3 +187,128 @@ blockquote {
   }
 }
 
+/* --- Homepage listing layout: date, full-width title, image left + abstract right --- */
+#listing-listing .list > li {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+/* Make each listing item a grid */
+#listing-listing .list > li .quarto-post {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  grid-template-areas:
+    "date date"
+    "title title"
+    "image abstract";
+  column-gap: 1.25rem;
+  row-gap: 0.35rem;
+  align-items: start;
+}
+
+/* Ensure the Quarto listing fields map into the grid */
+#listing-listing .list > li .listing-date    { grid-area: date; }
+#listing-listing .list > li .listing-title   { grid-area: title; }
+#listing-listing .list > li .listing-image   { grid-area: image; }
+#listing-listing .list > li .listing-abstract{ grid-area: abstract; }
+
+/* Title full-width + spacing */
+#listing-listing .list > li .listing-title a {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* Image sizing */
+#listing-listing .list > li .listing-image img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 0.5rem;
+}
+
+/* Abstract formatting */
+#listing-listing .list > li .listing-abstract {
+  margin-top: 0.15rem;
+}
+
+/* Mobile: stack */
+@media (max-width: 768px) {
+  #listing-listing .list > li .quarto-post {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "date"
+      "title"
+      "image"
+      "abstract";
+  }
+}
+
+/* =========================================================
+   Homepage listing layout (matches your DOM)
+   .quarto-post > .thumbnail + .body + .metadata (date+abstract inside .metadata a)
+   Goal: Date (top), Title (full width), Image left + Abstract right
+   ========================================================= */
+
+#listing-listing .quarto-post {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-areas:
+    "title title"
+    "thumb abstract";
+  column-gap: 1.25rem;
+  row-gap: 0.45rem;
+
+  /* make room for the absolutely-positioned date */
+  padding-top: 1.6rem;
+
+  margin-bottom: 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(0,0,0,0.12);
+}
+
+/* Place elements */
+#listing-listing .quarto-post .thumbnail { grid-area: thumb; }
+#listing-listing .quarto-post .body      { grid-area: title; }
+#listing-listing .quarto-post .metadata  { grid-area: abstract; }
+
+/* Keep the link behavior */
+#listing-listing .quarto-post a.no-external {
+  text-decoration: none;
+}
+
+/* Move date to top (above title) */
+#listing-listing .quarto-post .listing-date {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Ensure abstract is not constrained */
+#listing-listing .quarto-post .listing-abstract {
+  margin-top: 0.15rem;
+}
+
+/* Image sizing */
+#listing-listing .quarto-post .thumbnail img.thumbnail-image {
+  width: 100%;
+  height: auto !important; /* override inline height if needed */
+  display: block;
+  border-radius: 0.5rem;
+}
+
+/* Mobile: stack */
+@media (max-width: 768px) {
+  #listing-listing .quarto-post {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "thumb"
+      "abstract";
+  }
+}
+}
+
+
