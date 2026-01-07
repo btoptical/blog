@@ -1,7 +1,7 @@
 # Quarto
 /.quarto/
 /.quarto-cache/
-/_site/
+# /_site/
 
 # OS junk
 .DS_Store
