@@ -10,8 +10,8 @@ website:
   site-url: https://infinitelimit.ai
   navbar:
     left:
-      - href: index.qmd
-        text: Home
+      - href: about.qmd
+        text: About
       - href: posts/index.qmd
         text: Writing
     logo: images/logo.svg
