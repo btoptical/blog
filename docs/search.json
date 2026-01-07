@@ -9,9 +9,9 @@
   {
     "objectID": "posts/index.html",
     "href": "posts/index.html",
-    "title": "Writing",
+    "title": "Posts",
     "section": "",
-    "text": "Notes and essays.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOn Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
+    "text": "On Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "LICENSE.html",
@@ -42,8 +42,8 @@
     "text": "Diagram\n\n\n\nPerformance saturates well before theoretical infinity."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
+    "objectID": "index_old.html",
+    "href": "index_old.html",
     "title": "blog",
     "section": "",
     "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."

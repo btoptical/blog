@@ -1,10 +1,9 @@
 ---
-title: Writing
+title: "Posts"
 listing:
   contents: .
-  sort: date
-  type: default
+  sort: date desc
+  categories: true
+  page-size: 10
 ---
-
-Notes and essays.
 
