@@ -62,3 +62,22 @@ blockquote {
   font-style: normal;
 }
 
+/* Dark mode figure visibility fix */
+html[data-bs-theme="dark"] figure {
+  background: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 6px;
+}
+
+/* Ensure images don't overflow padding */
+figure img,
+figure svg {
+  display: block;
+  margin: 0 auto;
+}
+
+html[data-bs-theme="dark"] figure img,
+html[data-bs-theme="dark"] figure svg {
+  border: 1px solid #e5e7eb;
+}
+
