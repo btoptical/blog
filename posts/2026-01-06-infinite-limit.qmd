@@ -17,10 +17,5 @@ is useful precisely because it highlights where practice diverges from abstracti
 
 ## Diagram
 
-```{tikz}
-\begin{tikzpicture}
-  \draw[->] (0,0) -- (4,0) node[right]{Scale};
-  \draw[->] (0,0) -- (0,3) node[above]{Performance};
-  \draw[thick] (0,0) .. controls (2,2) .. (4,2.3);
-\end{tikzpicture}
+![Performance saturates well before theoretical infinity.](../images/limit.svg)
 
