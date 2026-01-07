@@ -3,6 +3,7 @@ project:
   output-dir: docs
   resources:
     - images
+    - https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap
 
 website:
   title: "Infinite Limit"
@@ -19,6 +20,8 @@ execute:
 
 format:
   html:
+    mainfont: Inter
+    monofont: JetBrains Mono
     theme:
       light: lux
       dark: darkly
