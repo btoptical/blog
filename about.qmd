@@ -2,4 +2,22 @@
 title: "About"
 ---
 
-About this site
+About Infinite Limit
+
+Most of the interesting problems in modern computing live near a boundary.
+
+Infinite Limit is a personal writing space focused on large-scale compute and networking systems. These systems are inherently interdisciplinary—spanning silicon, memory, interconnect, software, and architecture—and cannot be understood through any single lens.
+
+AI-driven infrastructure is changing rapidly, and in ways that are fundamentally different from traditional general-purpose compute and networking. Scale, specialization, and tight coupling between components mean that many of our inherited intuitions no longer hold. Assumptions that worked for CPUs, cache hierarchies, or enterprise networks often break down when applied to modern accelerator-based systems.
+
+Much of the work in this space is therefore exploratory. We are learning in real time: identifying new bottlenecks, revisiting old abstractions, and developing better mental models for how these systems actually behave under load and at scale.
+
+The goal of this writing is to reason clearly about those transitions—where limits come from, which ones matter, and how system behavior changes as we approach them.
+
+The mark that anchors this site,
+[
+\lim_{n \to \infty}
+]
+is intentional. It represents an infinite process that converges to something finite and meaningful—an idea that appears repeatedly in systems engineering.
+
+The views expressed here are my own and do not reflect the views or positions of my employer or any organization I am affiliated with.
