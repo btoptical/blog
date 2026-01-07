@@ -14,7 +14,7 @@ website:
         text: Home
       - href: posts/index.qmd
         text: Writing
-    logo: images/limit-mark.svg
+    logo: images/logo.svg
     logo-alt: "Infinite Limit"
     logo-href: /
 
