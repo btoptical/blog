@@ -1,28 +1,31 @@
-/* css styles */
-/* InfiniteLimit.ai — subtle tech brand */
+/* =========================================================
+   InfiniteLimit.ai — industry thought leadership style
+   ========================================================= */
 
+/* ---------- Brand tokens ---------- */
 :root {
-  --brand-primary: #0b5fff;   /* deep signal blue */
+  --brand-primary: #0b5fff;   /* signal blue */
   --brand-muted: #6b7280;     /* neutral gray */
-  --brand-bg-soft: #f8fafc;   /* near-white */
+  --brand-bg-soft: #f8fafc;   /* soft panel */
   --brand-border: #e5e7eb;
 }
 
-/* Content width & rhythm */
+/* ---------- Layout & rhythm ---------- */
 .page-columns {
   max-width: 1080px;
 }
 
-/* Typography tuning */
 body {
   letter-spacing: -0.01em;
 }
+
+/* ---------- Typography ---------- */
 h1, h2, h3 {
   font-weight: 600;
   letter-spacing: -0.02em;
 }
 
-/* Links: professional, not loud */
+/* ---------- Links ---------- */
 a {
   color: var(--brand-primary);
   text-decoration-thickness: 1px;
@@ -32,111 +35,155 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Code blocks & callouts */
-pre, code {
+/* ---------- Code & callouts ---------- */
+pre,
+code {
   border-radius: 6px;
 }
+
 .callout {
   border-left: 3px solid var(--brand-primary);
   background: var(--brand-bg-soft);
 }
 
-/* Figures & captions — paper-like */
+/* ---------- Figures (light + dark safe) ---------- */
 figure figcaption {
-  color: #6b7280;
+  color: var(--brand-muted);
   font-size: 0.9em;
   margin-top: 0.5em;
 }
 
-/* Horizontal rules as section dividers */
-hr {
-  border-top: 1px solid #e5e7eb;
-  margin: 3rem 0;
-}
-
-/* Blockquotes: restrained, analytical */
-blockquote {
-  border-left: 3px solid #e5e7eb;
-  padding-left: 1rem;
-  color: #374151;
-  font-style: normal;
-}
-
-/* Dark mode figure visibility fix */
-html[data-bs-theme="dark"] figure {
-  background: #f8fafc;
-  padding: 0.75rem;
-  border-radius: 6px;
-}
-
-/* Ensure images don't overflow padding */
 figure img,
 figure svg {
   display: block;
   margin: 0 auto;
 }
 
-html[data-bs-theme="dark"] figure img,
-html[data-bs-theme="dark"] figure svg {
-  border: 1px solid #e5e7eb;
+html[data-bs-theme="dark"] figure {
+  background: var(--brand-bg-soft);
+  padding: 0.75rem;
+  border-radius: 6px;
 }
 
+html[data-bs-theme="dark"] figure img,
+html[data-bs-theme="dark"] figure svg {
+  border: 1px solid var(--brand-border);
+}
+
+/* ---------- Structural separators ---------- */
+hr {
+  border-top: 1px solid var(--brand-border);
+  margin: 3rem 0;
+}
+
+/* ---------- Blockquotes ---------- */
+blockquote {
+  border-left: 3px solid var(--brand-border);
+  padding-left: 1rem;
+  color: #374151;
+  font-style: normal;
+}
+
+/* ---------- Navbar ---------- */
 .navbar {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  padding: 0.75rem 0;
+}
+
+.navbar-brand img {
+  height: 36px;
+  width: auto;
 }
 
 .site-wordmark {
-  font-family: Inter, "Source Sans 3", system-ui, sans-serif;
+  font-family: Inter, system-ui, sans-serif;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 0.9rem;
-  vertical-align: middle;
 }
 
 .navbar .math {
   font-size: 1.2rem;
 }
 
-/* Global navbar logo size */
-.navbar-brand img {
-  height: 36px;   /* try 28–40px */
-  width: auto;
-}
+/* =========================================================
+   Landing page listing layout
+   Date
+   Title
+   [ Image ]  Abstract
+   ========================================================= */
 
-/* Listing layout: force clean left alignment */
-.quarto-listing .listing-title {
-  text-align: left;
-  margin-top: 0.25rem;
-}
-
-/* Keep title visually tied to metadata */
 .quarto-listing .listing-item {
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  grid-template-areas:
+    "date date"
+    "title title"
+    "image abstract";
+  column-gap: 1.5rem;
+  row-gap: 0.5rem;
+  align-items: start;
 }
 
-/* Reduce excessive whitespace */
-.quarto-listing .listing-description {
-  margin-top: 0.25rem;
+/* Date (unchanged size, subdued tone) */
+.quarto-listing .listing-date {
+  grid-area: date;
+  color: var(--brand-muted);
+  font-size: 0.9em;
+  margin: 0;
 }
 
-/* Optional: slightly reduce title size on index */
+/* Title (full width, authoritative) */
+.quarto-listing .listing-title {
+  grid-area: title;
+  text-align: left;
+  margin: 0;
+}
+
 .quarto-listing .listing-title a {
   font-size: 1.15em;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-/* Slightly dim the date */
-.quarto-listing .listing-date {
-  color: #6b7280;
-  font-size: 0.9em;
+/* Optional separator under title */
+.quarto-listing .listing-title::after {
+  content: "";
+  display: block;
+  border-bottom: 1px solid var(--brand-border);
+  margin-top: 0.5rem;
 }
 
-/* Listing preview images */
+/* Image left */
+.quarto-listing .listing-image {
+  grid-area: image;
+}
+
 .quarto-listing .listing-image img {
   border-radius: 6px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--brand-border);
   background: white;
+}
+
+/* Abstract right */
+.quarto-listing .listing-description {
+  grid-area: abstract;
+  margin: 0;
+}
+
+/* ---------- Mobile: collapse to single column ---------- */
+@media (max-width: 768px) {
+  .quarto-listing .listing-item {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "date"
+      "title"
+      "image"
+      "abstract";
+  }
+
+  .quarto-listing .listing-image {
+    margin-bottom: 0.5rem;
+  }
 }
 

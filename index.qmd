@@ -7,6 +7,6 @@ listing:
   sort: date desc
   categories: true
   page-size: 10
-  fields: [image, date, title, abstract]
+  fields: [date, title, image, abstract]
   image-height: 160px
 ---
