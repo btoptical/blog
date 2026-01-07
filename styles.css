@@ -104,3 +104,39 @@ html[data-bs-theme="dark"] figure svg {
   height: 36px;   /* try 28–40px */
   width: auto;
 }
+
+/* Listing layout: force clean left alignment */
+.quarto-listing .listing-title {
+  text-align: left;
+  margin-top: 0.25rem;
+}
+
+/* Keep title visually tied to metadata */
+.quarto-listing .listing-item {
+  align-items: flex-start;
+}
+
+/* Reduce excessive whitespace */
+.quarto-listing .listing-description {
+  margin-top: 0.25rem;
+}
+
+/* Optional: slightly reduce title size on index */
+.quarto-listing .listing-title a {
+  font-size: 1.15em;
+  font-weight: 600;
+}
+
+/* Slightly dim the date */
+.quarto-listing .listing-date {
+  color: #6b7280;
+  font-size: 0.9em;
+}
+
+/* Listing preview images */
+.quarto-listing .listing-image img {
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+

@@ -3,9 +3,10 @@ title: ""
 listing:
   contents:
     - posts/*.qmd
+  type: default
   sort: date desc
   categories: true
   page-size: 10
-  fields: [date, title, abstract]
+  fields: [image, date, title, abstract]
+  image-height: 160px
 ---
-
