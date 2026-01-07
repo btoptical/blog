@@ -1,0 +1,51 @@
+[
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Writing",
+    "section": "",
+    "text": "Notes and essays.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOn Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "LICENSE.html",
+    "href": "LICENSE.html",
+    "title": "Infinite Limit",
+    "section": "",
+    "text": "Creative Commons Attribution 4.0 International (CC BY 4.0)\nThis work is licensed under the Creative Commons Attribution 4.0 International License.\nYou are free to: - Share — copy and redistribute the material in any medium or format - Adapt — remix, transform, and build upon the material for any purpose, even commercially\nUnder the following terms: - Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made.\nLicense text: https://creativecommons.org/licenses/by/4.0/"
+  },
+  {
+    "objectID": "posts/2026-01-06-infinite-limit.html",
+    "href": "posts/2026-01-06-infinite-limit.html",
+    "title": "On Infinite Limits",
+    "section": "",
+    "text": "Real systems approach limits long before theory reaches infinity.\nA familiar expression:\n\\[\n\\lim_{n \\to \\infty} f(n)\n\\]\nis useful precisely because it highlights where practice diverges from abstraction."
+  },
+  {
+    "objectID": "posts/2026-01-06-infinite-limit.html#motivation",
+    "href": "posts/2026-01-06-infinite-limit.html#motivation",
+    "title": "On Infinite Limits",
+    "section": "",
+    "text": "Real systems approach limits long before theory reaches infinity.\nA familiar expression:\n\\[\n\\lim_{n \\to \\infty} f(n)\n\\]\nis useful precisely because it highlights where practice diverges from abstraction."
+  },
+  {
+    "objectID": "posts/2026-01-06-infinite-limit.html#diagram",
+    "href": "posts/2026-01-06-infinite-limit.html#diagram",
+    "title": "On Infinite Limits",
+    "section": "Diagram",
+    "text": "Diagram"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "blog",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  }
+]
