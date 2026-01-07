@@ -1,1 +1,64 @@
 /* css styles */
+/* InfiniteLimit.ai — subtle tech brand */
+
+:root {
+  --brand-primary: #0b5fff;   /* deep signal blue */
+  --brand-muted: #6b7280;     /* neutral gray */
+  --brand-bg-soft: #f8fafc;   /* near-white */
+  --brand-border: #e5e7eb;
+}
+
+/* Content width & rhythm */
+.page-columns {
+  max-width: 1080px;
+}
+
+/* Typography tuning */
+body {
+  letter-spacing: -0.01em;
+}
+h1, h2, h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Links: professional, not loud */
+a {
+  color: var(--brand-primary);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* Code blocks & callouts */
+pre, code {
+  border-radius: 6px;
+}
+.callout {
+  border-left: 3px solid var(--brand-primary);
+  background: var(--brand-bg-soft);
+}
+
+/* Figures & captions — paper-like */
+figure figcaption {
+  color: #6b7280;
+  font-size: 0.9em;
+  margin-top: 0.5em;
+}
+
+/* Horizontal rules as section dividers */
+hr {
+  border-top: 1px solid #e5e7eb;
+  margin: 3rem 0;
+}
+
+/* Blockquotes: restrained, analytical */
+blockquote {
+  border-left: 3px solid #e5e7eb;
+  padding-left: 1rem;
+  color: #374151;
+  font-style: normal;
+}
+
