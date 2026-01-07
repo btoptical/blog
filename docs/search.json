@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
-  },
-  {
     "objectID": "posts/index.html",
     "href": "posts/index.html",
     "title": "Posts",
@@ -14,11 +7,18 @@
     "text": "On Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "LICENSE.html",
-    "href": "LICENSE.html",
+    "objectID": "index.html",
+    "href": "index.html",
     "title": "Infinite Limit",
     "section": "",
-    "text": "Creative Commons Attribution 4.0 International (CC BY 4.0)\nThis work is licensed under the Creative Commons Attribution 4.0 International License.\nYou are free to: - Share — copy and redistribute the material in any medium or format - Adapt — remix, transform, and build upon the material for any purpose, even commercially\nUnder the following terms: - Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made.\nLicense text: https://creativecommons.org/licenses/by/4.0/"
+    "text": "Posts\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOn Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
   },
   {
     "objectID": "posts/2026-01-06-infinite-limit.html",
@@ -40,12 +40,5 @@
     "title": "On Infinite Limits",
     "section": "Diagram",
     "text": "Diagram\n\n\n\nPerformance saturates well before theoretical infinity."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Infinite Limit",
-    "section": "",
-    "text": "Posts\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nOn Infinite Limits\n\n\n\n\n\n\n\n\nJan 6, 2026\n\n\n\n\n\nNo matching items"
   }
 ]
