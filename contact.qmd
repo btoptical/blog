@@ -27,5 +27,7 @@ Get in touch.  Your email won't be sold and I won't send you spam.
   <input type="hidden" name="_subject" value="New message from Infinite Limit">
 
   <button type="submit">Send</button>
+  <input type="hidden" name="_next" value="/thanks.html">
+
 </form>
 ```
