@@ -1,0 +1,32 @@
+---
+title: "Contact"
+---
+
+Feel free to send a note. (No email address posted to avoid scraping.)
+
+<form action="https://formspree.io/f/abcdwxyz" method="POST">
+  <div>
+    <label>Name</label><br>
+    <input type="text" name="name" required>
+  </div>
+  <br>
+  <div>
+    <label>Email (so I can reply)</label><br>
+    <input type="email" name="email" required>
+  </div>
+  <br>
+  <div>
+    <label>Message</label><br>
+    <textarea name="message" rows="7" required></textarea>
+  </div>
+
+  <!-- Honeypot anti-spam field (should stay empty) -->
+  <input type="text" name="_gotcha" style="display:none">
+
+  <!-- Optional: customize subject -->
+  <input type="hidden" name="_subject" value="New message from your site">
+
+  <br>
+  <button type="submit">Send</button>
+</form>
+
