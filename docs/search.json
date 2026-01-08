@@ -25,7 +25,7 @@
     "href": "contact.html",
     "title": "Contact",
     "section": "",
-    "text": "Feel free to send a note. (No email address posted to avoid scraping.)\n\n\n&lt;label&gt;Name&lt;/label&gt;&lt;br&gt;\n&lt;input type=\"text\" name=\"name\" required&gt;\n\n\n\n&lt;label&gt;Email (so I can reply)&lt;/label&gt;&lt;br&gt;\n&lt;input type=\"email\" name=\"email\" required&gt;\n\n\n\n&lt;label&gt;Message&lt;/label&gt;&lt;br&gt;\n&lt;textarea name=\"message\" rows=\"7\" required&gt;&lt;/textarea&gt;\n\n\n\n\n\n Send"
+    "text": "Get in touch. Your email won’t be sold and I won’t send you spam.\n\n  \n    Name\n    \n  \n\n  \n    Email (so I can reply)\n    \n  \n\n  \n    Message\n    \n  \n\n  \n  \n\n  \n\n  Send"
   },
   {
     "objectID": "about.html",

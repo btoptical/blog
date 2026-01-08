@@ -2,31 +2,30 @@
 title: "Contact"
 ---
 
-Feel free to send a note. (No email address posted to avoid scraping.)
+Get in touch.  Your email won't be sold and I won't send you spam.
 
-<form action="https://formspree.io/f/abcdwxyz" method="POST">
-  <div>
-    <label>Name</label><br>
-    <input type="text" name="name" required>
-  </div>
-  <br>
-  <div>
-    <label>Email (so I can reply)</label><br>
-    <input type="email" name="email" required>
-  </div>
-  <br>
-  <div>
-    <label>Message</label><br>
-    <textarea name="message" rows="7" required></textarea>
+```{=html}
+<form action="https://formspree.io/f/mwvpgrez" method="POST">
+  <div class="contact-field">
+    <label for="name">Name</label><br>
+    <input id="name" type="text" name="name" required>
   </div>
 
-  <!-- Honeypot anti-spam field (should stay empty) -->
+  <div class="contact-field">
+    <label for="email">Email (so I can reply)</label><br>
+    <input id="email" type="email" name="email" required>
+  </div>
+
+  <div class="contact-field">
+    <label for="message">Message</label><br>
+    <textarea id="message" name="message" rows="7" required></textarea>
+  </div>
+
+  <!-- Honeypot -->
   <input type="text" name="_gotcha" style="display:none">
 
-  <!-- Optional: customize subject -->
-  <input type="hidden" name="_subject" value="New message from your site">
+  <input type="hidden" name="_subject" value="New message from Infinite Limit">
 
-  <br>
   <button type="submit">Send</button>
 </form>
-
+```
