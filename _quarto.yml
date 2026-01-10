@@ -8,7 +8,7 @@ project:
     - images
 
 website:
-  title: "Infinite Limit"
+  title: ""
   site-url: https://infinitelimit.ai
   page-footer:
     center: |
@@ -17,24 +17,28 @@ website:
 
   navbar:
     left:
-      - href: /
-        text: Writing
       - href: about.qmd
         text: About
-      - href: contact.qmd
-        text: Contact
-    logo: images/logo.svg
+      - href: /
+        text: Writing
+    logo: images/logo-navbar.svg
     logo-alt: "Infinite Limit"
     logo-href: /
+
+    right:
+      - href: contact.qmd
+        text: Contact
 
 execute:
   enabled: true
 
 format:
   html:
+#    include-before-body:
+#      - includes/subnav.html
     css: styles.css
     theme:
-      light: lux
+      light: default
       dark: darkly
     mainfont: Inter
     monofont: JetBrains Mono
@@ -43,5 +47,6 @@ format:
     toc: true
     code-copy: true
     smooth-scroll: true
-    math: mathjax
+    html-math-method: mathjax
+
 

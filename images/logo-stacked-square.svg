@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="lim n→∞" preserveAspectRatio="xMidYMid meet">
+  <g transform="translate(81.920000 350.720000) scale(5.37600000)">
+<text x="80" y="30" text-anchor="middle"
+        font-family="STIX Two Math, Latin Modern Math, serif"
+        font-size="32"
+        fill="currentColor">lim</text>
+  <text x="80" y="50" text-anchor="middle"
+        font-family="STIX Two Math, Latin Modern Math, serif"
+        font-size="18"
+        fill="currentColor">n→∞</text>
+  </g>
+</svg>

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Contact – Infinite Limit</title>
+<title>Contact</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -42,9 +42,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6c2f6c9a5e848e756d04ce3b9960236c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-5af20ef81889f2c739072abffa859735.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/bootstrap/bootstrap-dark-53edaacb714dd51abbfc5dc1603ab1e1.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-6c2f6c9a5e848e756d04ce3b9960236c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-5af20ef81889f2c739072abffa859735.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -74,35 +74,6 @@ ul.task-list li input[type="checkbox"] {
 }</script>
 <style>html{ scroll-behavior: smooth; }</style>
 
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -277,11 +248,8 @@ window.Quarto = {
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="./" class="navbar-brand navbar-brand-logo">
-    <img src="./images/logo.svg" alt="Infinite Limit" class="navbar-logo light-content">
-    <img src="./images/logo.svg" alt="Infinite Limit" class="navbar-logo dark-content">
-    </a>
-    <a class="navbar-brand" href="./">
-    <span class="navbar-title">Infinite Limit</span>
+    <img src="./images/logo-navbar.svg" alt="Infinite Limit" class="navbar-logo light-content">
+    <img src="./images/logo-navbar.svg" alt="Infinite Limit" class="navbar-logo dark-content">
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
@@ -291,13 +259,15 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./"> 
-<span class="menu-text">Writing</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./"> 
+<span class="menu-text">Writing</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
     <a class="nav-link active" href="./contact.html" aria-current="page"> 
 <span class="menu-text">Contact</span></a>
@@ -366,7 +336,6 @@ window.Quarto = {
   <input type="hidden" name="_next" value="/thanks.html">
 
 </form>
-
 
 
 

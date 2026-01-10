@@ -15,9 +15,12 @@ Much of the work in this space is therefore exploratory. We are learning in real
 The goal of this writing is to reason clearly about those transitions—where limits come from, which ones matter, and how system behavior changes as we approach them.
 
 The mark that anchors this site,
-[
-\lim_{n \to \infty}
-]
+
+
+$$
+{\LARGE \lim_{n \to \infty}}
+$$
+
 is intentional. It represents an infinite process that converges to something finite and meaningful—an idea that appears repeatedly in systems engineering.
 
 The views expressed here are my own and do not reflect the views or positions of my employer or any organization I am affiliated with.

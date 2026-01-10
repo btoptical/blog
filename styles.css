@@ -90,8 +90,16 @@ blockquote {
 }
 
 .navbar-brand img {
-  height: 36px;
-  width: auto;
+  height: 100px !important;
+  max-height: none !important;
+  width: auto !important;
+}
+
+.navbar,
+.navbar .navbar-brand {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
 }
 
 .site-wordmark {
@@ -105,6 +113,26 @@ blockquote {
 .navbar .math {
   font-size: 1.2rem;
 }
+
+.subnav {
+  background: var(--bg-main);
+  border-bottom: 1px solid var(--brand-border);
+  font-size: 0.95rem;
+}
+.subnav-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0.35rem 1rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+.subnav a { text-decoration: none; opacity: 0.85; }
+.subnav a:hover { opacity: 1; text-decoration: underline; }
+
+/* push main navbar down a bit */
+.navbar { margin-top: 2.0rem; }
+
 
 /* =========================================================
    Landing page listing layout
@@ -244,59 +272,62 @@ blockquote {
   }
 }
 
-/* =========================================================
-   Homepage listing layout (matches your DOM)
-   .quarto-post > .thumbnail + .body + .metadata (date+abstract inside .metadata a)
-   Goal: Date (top), Title (full width), Image left + Abstract right
-   ========================================================= */
-
+/* --- Listing layout fix (Quarto "container-default" + .quarto-post.image-right) --- */
 #listing-listing .quarto-post {
-  position: relative;
   display: grid;
   grid-template-columns: 240px 1fr;
   grid-template-areas:
+    "date date"
     "title title"
     "thumb abstract";
   column-gap: 1.25rem;
-  row-gap: 0.45rem;
-
-  /* make room for the absolutely-positioned date */
-  padding-top: 1.6rem;
-
+  row-gap: 0.4rem;
+  align-items: start;
   margin-bottom: 1.25rem;
   padding-bottom: 1.25rem;
   border-bottom: 1px solid rgba(0,0,0,0.12);
 }
 
-/* Place elements */
+/* Map existing elements into the grid */
 #listing-listing .quarto-post .thumbnail { grid-area: thumb; }
 #listing-listing .quarto-post .body      { grid-area: title; }
-#listing-listing .quarto-post .metadata  { grid-area: abstract; }
+#listing-listing .quarto-post .metadata  { grid-area: date; }
 
-/* Keep the link behavior */
-#listing-listing .quarto-post a.no-external {
+/* Pull abstract out so it sits to the right of the image */
+#listing-listing .quarto-post .metadata .listing-abstract {
+  grid-area: abstract;
+  margin-top: 0.25rem;
+}
+
+/* Make metadata itself act like a grid to place date + abstract */
+#listing-listing .quarto-post .metadata a {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-areas:
+    "date date"
+    "abstract abstract";
+  row-gap: 0.25rem;
   text-decoration: none;
 }
 
-/* Move date to top (above title) */
-#listing-listing .quarto-post .listing-date {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-}
+/* Keep date styled normally, just place it */
+#listing-listing .quarto-post .listing-date { grid-area: date; }
 
-/* Ensure abstract is not constrained */
-#listing-listing .quarto-post .listing-abstract {
-  margin-top: 0.15rem;
-}
+/* Place abstract in its area */
+#listing-listing .quarto-post .listing-abstract { grid-area: abstract; }
 
 /* Image sizing */
 #listing-listing .quarto-post .thumbnail img.thumbnail-image {
   width: 100%;
-  height: auto !important; /* override inline height if needed */
+  height: auto !important;   /* override inline height if needed */
+  max-height: none;
   display: block;
   border-radius: 0.5rem;
+}
+
+/* Title full-width */
+#listing-listing .quarto-post .listing-title a {
+  text-decoration: none;
 }
 
 /* Mobile: stack */
@@ -304,25 +335,13 @@ blockquote {
   #listing-listing .quarto-post {
     grid-template-columns: 1fr;
     grid-template-areas:
+      "date"
       "title"
       "thumb"
       "abstract";
   }
-}
+  #listing-listing .quarto-post .metadata a {
+    grid-template-columns: 1fr;
+  }
 }
 
-
-.contact-field { margin-bottom: 1rem; }
-.contact-field input,
-.contact-field textarea {
-  width: min(700px, 100%);
-  padding: 0.6rem 0.75rem;
-  border: 1px solid rgba(0,0,0,0.18);
-  border-radius: 0.6rem;
-}
-.contact-field label { font-weight: 600; }
-form button[type="submit"]{
-  padding: 0.55rem 1rem;
-  border-radius: 0.8rem;
-  border: 1px solid rgba(0,0,0,0.25);
-}
