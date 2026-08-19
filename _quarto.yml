@@ -3,50 +3,53 @@ project:
   output-dir: docs
   render:
     - "*.qmd"
-    - "posts/*.qmd"
+    - "posts/**/*.qmd"
   resources:
     - images
 
 website:
-  title: ""
+  title: "Infinite Limit"
+  description: "Notes and essays on AI infrastructure, systems architecture, scaling, and physical limits."
   site-url: https://infinitelimit.ai
+  favicon: images/logo-square.svg
+  open-graph: true
+  twitter-card: true
+  llms-txt: true
+
   page-footer:
     center: |
-      © 2026 Brian Taylor ·  
-      <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>  
+      © 2026 Brian Taylor ·
+      <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
 
   navbar:
-    left:
-      - href: about.qmd
-        text: About
-      - href: /
-        text: Writing
+    title: false
+    background: light
+    foreground: dark
+    search: false
     logo: images/logo-navbar.svg
     logo-alt: "Infinite Limit"
     logo-href: /
-
+    left:
+      - href: /
+        text: Writing
+      - href: about.qmd
+        text: About
     right:
       - href: contact.qmd
         text: Contact
-
-execute:
-  enabled: true
+    tools:
+      - icon: rss
+        href: index.xml
+        aria-label: RSS feed
 
 format:
   html:
-#    include-before-body:
-#      - includes/subnav.html
-    css: styles.css
+    css:
+      - styles.css
+      - print.css
     theme:
       light: default
       dark: darkly
-    mainfont: Inter
-    monofont: JetBrains Mono
     fontsize: 1.05em
     linestretch: 1.6
-    toc: true
-    code-copy: true
-    smooth-scroll: true
-    html-math-method: mathjax
-
-
+    toc: false

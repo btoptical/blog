@@ -1,0 +1,760 @@
+diff -ruN current/_quarto.yml proposed/_quarto.yml
+--- current/_quarto.yml	2026-08-18 22:55:24.939979458 +0000
++++ proposed/_quarto.yml	2026-08-18 22:55:24.948914409 +0000
+@@ -3,47 +3,53 @@
+   output-dir: docs
+   render:
+     - "*.qmd"
+-    - "posts/*.qmd"
++    - "posts/**/*.qmd"
+   resources:
+     - images
+ 
+ website:
+-  title: ""
++  title: "Infinite Limit"
++  description: "Notes and essays on AI infrastructure, systems architecture, scaling, and physical limits."
+   site-url: https://infinitelimit.ai
++  favicon: images/logo-square.svg
++  open-graph: true
++  twitter-card: true
++  llms-txt: true
++
+   page-footer:
+     center: |
+       © 2026 Brian Taylor ·
+-      <a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a>
++      <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+ 
+   navbar:
+-    left:
+-      - href: about.qmd
+-        text: About
+-      - href: /
+-        text: Writing
++    title: false
++    background: light
++    foreground: dark
++    search: false
+     logo: images/logo-navbar.svg
+     logo-alt: "Infinite Limit"
+     logo-href: /
++    left:
++      - href: /
++        text: Writing
++      - href: about.qmd
++        text: About
+     right:
+       - href: contact.qmd
+         text: Contact
+-
+-execute:
+-  enabled: true
++    tools:
++      - icon: rss
++        href: index.xml
++        aria-label: RSS feed
+ 
+ format:
+   html:
+-#    include-before-body:
+-#      - includes/subnav.html
+-    css: styles.css
++    css:
++      - styles.css
++      - print.css
+     theme:
+       light: default
+       dark: darkly
+-    mainfont: Inter
+-    monofont: JetBrains Mono
+     fontsize: 1.05em
+     linestretch: 1.6
+-    toc: true
+-    code-copy: true
+-    smooth-scroll: true
+-    html-math-method: mathjax
++    toc: false
+diff -ruN current/_templates/post-listing.ejs.md proposed/_templates/post-listing.ejs.md
+--- current/_templates/post-listing.ejs.md	1970-01-01 00:00:00.000000000 +0000
++++ proposed/_templates/post-listing.ejs.md	2026-08-18 22:55:24.950432085 +0000
+@@ -0,0 +1,27 @@
++```{=html}
++<div class="post-list list">
++<% for (const item of items) { %>
++  <article class="post-card" <%= metadataAttrs(item) %>>
++    <time class="post-card__date listing-date"><%= item.date %></time>
++
++    <h2 class="post-card__title listing-title">
++      <a href="<%- item.path %>"><%- item.title %></a>
++    </h2>
++
++    <% if (item.image) { %>
++    <a class="post-card__image listing-image"
++       href="<%- item.path %>"
++       aria-label="Read <%- item.title %>">
++      <img src="<%- item.image %>"
++           alt="<%- item['image-alt'] || '' %>"
++           loading="lazy">
++    </a>
++    <% } %>
++
++    <div class="post-card__description listing-description">
++      <%= item.description %>
++    </div>
++  </article>
++<% } %>
++</div>
++```
+diff -ruN current/about.qmd proposed/about.qmd
+--- current/about.qmd	2026-08-18 22:55:24.943881072 +0000
++++ proposed/about.qmd	2026-08-18 22:55:24.954029512 +0000
+@@ -2,8 +2,6 @@
+ title: "About"
+ ---
+ 
+-About Infinite Limit
+-
+ Most of the interesting problems in modern computing live near a boundary.
+ 
+ Infinite Limit is a personal writing space focused on large-scale compute and networking systems. These systems are inherently interdisciplinary—spanning silicon, memory, interconnect, software, and architecture—and cannot be understood through any single lens.
+diff -ruN current/contact.qmd proposed/contact.qmd
+--- current/contact.qmd	2026-08-18 22:55:24.942294690 +0000
++++ proposed/contact.qmd	2026-08-18 22:55:24.953153844 +0000
+@@ -2,31 +2,33 @@
+ title: "Contact"
+ ---
+ 
+-Get in touch.  Your email won't be sold and I won't send you spam.
++Get in touch.  Your email will only be used to reply to this message.
+ 
+ ```{=html}
+-<form action="https://formspree.io/f/mwvpgrez" method="POST">
++<form class="contact-form" action="https://formspree.io/f/mwvpgrez" method="POST">
+   <div class="contact-field">
+-    <label for="name">Name</label><br>
+-    <input id="name" type="text" name="name" required>
++    <label for="name">Name</label>
++    <input id="name" type="text" name="name" autocomplete="name" required>
+   </div>
+ 
+   <div class="contact-field">
+-    <label for="email">Email (so I can reply)</label><br>
+-    <input id="email" type="email" name="email" required>
++    <label for="email">Email</label>
++    <input id="email" type="email" name="email" autocomplete="email" required>
+   </div>
++
+   <div class="contact-field">
+-    <label for="message">Message</label><br>
++    <label for="message">Message</label>
+     <textarea id="message" name="message" rows="7" required></textarea>
+   </div>
+ 
+-  <!-- Honeypot -->
+-  <input type="text" name="_gotcha" style="display:none">
++  <div class="honeypot" aria-hidden="true">
++    <label for="company">Company</label>
++    <input id="company" type="text" name="_gotcha" tabindex="-1" autocomplete="off">
++  </div>
+ 
+   <input type="hidden" name="_subject" value="New message from Infinite Limit">
++  <input type="hidden" name="_next" value="https://infinitelimit.ai/thanks.html">
+ 
+   <button type="submit">Send</button>
+-  <input type="hidden" name="_next" value="/thanks.html">
+-
+ </form>
+ ```
+diff -ruN current/includes/subnav.html proposed/includes/subnav.html
+--- current/includes/subnav.html	2026-08-18 22:55:24.945780130 +0000
++++ proposed/includes/subnav.html	1970-01-01 00:00:00.000000000 +0000
+@@ -1,7 +0,0 @@
+-<div class="subnav">
+-  <div class="subnav-inner">
+-    <a href="/about.html">About</a>
+-    <a href="/writing.html">Writing</a>
+-    <a href="/contact.html">Contact</a>
+-  </div>
+-</div>
+diff -ruN current/index.qmd proposed/index.qmd
+--- current/index.qmd	2026-08-18 22:55:24.941076408 +0000
++++ proposed/index.qmd	2026-08-18 22:55:24.949666393 +0000
+@@ -1,12 +1,12 @@
+ ---
+ title: ""
+ listing:
+-  contents:
+-    - posts/*.qmd
+-  type: default
+-  sort: date desc
+-  categories: true
+-  page-size: 10
+-  fields: [date, title, image, abstract]
+-  image-height: 160px
++  contents: posts
++  template: _templates/post-listing.ejs.md
++  sort: "date desc"
++  date-format: long
++  field-required: [title, date, description]
++  feed:
++    type: partial
++    items: 20
+ ---
+diff -ruN current/posts/2026-01-06-infinite-limit.qmd proposed/posts/2026-01-06-infinite-limit.qmd
+--- current/posts/2026-01-06-infinite-limit.qmd	2026-08-18 22:55:24.944968061 +0000
++++ proposed/posts/2026-01-06-infinite-limit.qmd	2026-08-18 22:55:24.955020113 +0000
+@@ -2,9 +2,9 @@
+ title: "On Infinite Limits"
+ date: 2026-01-06
+ categories: [Performance]
+-abstract: |
+-  Real systems approach limits long before theory reaches infinity.
++description: "Real systems approach limits long before theory reaches infinity."
+ image: /images/limit.svg
++image-alt: "A performance curve that saturates well before the theoretical limit."
+ ---
+ 
+ ## Motivation
+diff -ruN current/styles.css proposed/styles.css
+--- current/styles.css	2026-08-18 22:55:24.947969155 +0000
++++ proposed/styles.css	2026-08-18 22:58:18.513032252 +0000
+@@ -1,54 +1,91 @@
+-/* =========================================================
+-   InfiniteLimit.ai — industry thought leadership style
+-   ========================================================= */
++/* Infinite Limit: site-level design tokens and components. */
+ 
+-/* ---------- Brand tokens ---------- */
+ :root {
+-  --brand-primary: #0b5fff;   /* signal blue */
+-  --brand-muted: #6b7280;     /* neutral gray */
+-  --brand-bg-soft: #f8fafc;   /* soft panel */
+-  --brand-border: #e5e7eb;
++  --il-accent: #0b5fff;
++  --il-accent-hover: #0847c7;
++  --il-text: #18212f;
++  --il-muted: #667085;
++  --il-surface: #f7f9fc;
++  --il-border: #dfe4ec;
++  --il-image-bg: #ffffff;
++  --il-page-width: 72rem;
++  --il-radius: 0.5rem;
++}
++
++body.quarto-dark {
++  --il-accent: #8db5ff;
++  --il-accent-hover: #b8d0ff;
++  --il-text: #edf2f7;
++  --il-muted: #aab4c3;
++  --il-surface: #1d2531;
++  --il-border: #3a4657;
+ }
+ 
+-/* ---------- Layout & rhythm ---------- */
+-.page-columns {
+-  max-width: 1080px;
++html {
++  scroll-behavior: smooth;
+ }
+ 
+ body {
++  color: var(--il-text);
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
++    "Segoe UI", sans-serif;
+   letter-spacing: -0.01em;
+ }
+ 
+-/* ---------- Typography ---------- */
+-h1, h2, h3 {
+-  font-weight: 600;
+-  letter-spacing: -0.02em;
++code,
++pre {
++  border-radius: 0.4rem;
++  font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono",
++    monospace;
++}
++
++.page-columns,
++.navbar-container {
++  max-width: var(--il-page-width);
+ }
+ 
+-/* ---------- Links ---------- */
+-a {
+-  color: var(--brand-primary);
++h1,
++h2,
++h3 {
++  font-weight: 650;
++  letter-spacing: -0.025em;
++}
++
++main.content a {
++  color: var(--il-accent);
+   text-decoration-thickness: 1px;
+-  text-underline-offset: 3px;
++  text-underline-offset: 0.2em;
+ }
+-a:hover {
++
++main.content a:hover {
++  color: var(--il-accent-hover);
+   text-decoration: underline;
+ }
+ 
+-/* ---------- Code & callouts ---------- */
+-pre,
+-code {
+-  border-radius: 6px;
++:where(a, button, input, textarea, select):focus-visible {
++  outline: 3px solid var(--il-accent);
++  outline-offset: 3px;
++}
++
++hr {
++  border-top: 1px solid var(--il-border);
++  margin: 3rem 0;
++  opacity: 1;
++}
++
++blockquote {
++  border-left: 3px solid var(--il-border);
++  color: var(--il-muted);
++  font-style: normal;
++  padding-left: 1rem;
+ }
+ 
+ .callout {
+-  border-left: 3px solid var(--brand-primary);
+-  background: var(--brand-bg-soft);
++  border-left-width: 3px;
+ }
+ 
+-/* ---------- Figures (light + dark safe) ---------- */
+ figure figcaption {
+-  color: var(--brand-muted);
++  color: var(--il-muted);
+   font-size: 0.9em;
+   margin-top: 0.5em;
+ }
+@@ -56,292 +93,205 @@
+ figure img,
+ figure svg {
+   display: block;
+-  margin: 0 auto;
++  margin-inline: auto;
+ }
+ 
+-html[data-bs-theme="dark"] figure {
+-  background: var(--brand-bg-soft);
++body.quarto-dark figure:has(img[src$=".svg"]) {
++  background: var(--il-image-bg);
++  border-radius: var(--il-radius);
+   padding: 0.75rem;
+-  border-radius: 6px;
+ }
+ 
+-html[data-bs-theme="dark"] figure img,
+-html[data-bs-theme="dark"] figure svg {
+-  border: 1px solid var(--brand-border);
++body.quarto-dark figure:has(img[src$=".svg"]) figcaption {
++  color: #4b5563;
+ }
+ 
+-/* ---------- Structural separators ---------- */
+-hr {
+-  border-top: 1px solid var(--brand-border);
+-  margin: 3rem 0;
+-}
++/* Navbar */
+ 
+-/* ---------- Blockquotes ---------- */
+-blockquote {
+-  border-left: 3px solid var(--brand-border);
+-  padding-left: 1rem;
+-  color: #374151;
+-  font-style: normal;
+-}
+-
+-/* ---------- Navbar ---------- */
+ .navbar {
+-  padding: 0.75rem 0;
++  background: var(--bs-body-bg);
++  border-bottom: 1px solid var(--il-border);
++  margin: 0;
++  min-height: 4.5rem;
++  padding: 0.35rem 0;
+ }
+ 
+ .navbar-brand img {
+-  height: 100px !important;
+-  max-height: none !important;
+-  width: auto !important;
++  height: 3.5rem;
++  max-height: 3.5rem;
++  width: auto;
+ }
+ 
+-.navbar,
+-.navbar .navbar-brand {
+-  min-height: 100px;
+-  display: flex;
+-  align-items: center;
++.navbar .nav-link,
++.navbar .quarto-navigation-tool {
++  color: var(--il-text);
++  font-size: 0.95rem;
++  font-weight: 550;
++  text-decoration: none;
+ }
+ 
+-.site-wordmark {
+-  font-family: Inter, system-ui, sans-serif;
+-  font-weight: 500;
+-  letter-spacing: 0.08em;
+-  text-transform: uppercase;
+-  font-size: 0.9rem;
++.navbar .nav-link:hover,
++.navbar .nav-link.active,
++.navbar .quarto-navigation-tool:hover {
++  color: var(--il-accent);
+ }
+ 
+-.navbar .math {
+-  font-size: 1.2rem;
++body.quarto-dark .navbar-brand img,
++body.quarto-dark .navbar-toggler-icon {
++  filter: invert(1);
+ }
+ 
+-.subnav {
+-  background: var(--bg-main);
+-  border-bottom: 1px solid var(--brand-border);
+-  font-size: 0.95rem;
++/* Homepage listing: date, title, then image beside description. */
++
++.post-list {
++  margin-top: 0.25rem;
+ }
+-.subnav-inner {
+-  max-width: 1080px;
+-  margin: 0 auto;
+-  padding: 0.35rem 1rem;
+-  display: flex;
+-  gap: 1rem;
+-  justify-content: flex-end;
+-}
+-.subnav a { text-decoration: none; opacity: 0.85; }
+-.subnav a:hover { opacity: 1; text-decoration: underline; }
+-
+-/* push main navbar down a bit */
+-.navbar { margin-top: 2.0rem; }
+-
+-
+-/* =========================================================
+-   Landing page listing layout
+-   Date
+-   Title
+-   [ Image ]  Abstract
+-   ========================================================= */
+ 
+-.quarto-listing .listing-item {
++.post-card {
++  border-bottom: 1px solid var(--il-border);
+   display: grid;
+-  grid-template-columns: 160px 1fr;
++  gap: 0.55rem 1.5rem;
+   grid-template-areas:
+     "date date"
+     "title title"
+-    "image abstract";
+-  column-gap: 1.5rem;
+-  row-gap: 0.5rem;
+-  align-items: start;
++    "image description";
++  grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
++  padding: 1.75rem 0 2rem;
+ }
+ 
+-/* Date (unchanged size, subdued tone) */
+-.quarto-listing .listing-date {
+-  grid-area: date;
+-  color: var(--brand-muted);
++.post-card:first-child {
++  padding-top: 0.5rem;
++}
++
++.post-card__date {
++  color: var(--il-muted);
+   font-size: 0.9em;
++  grid-area: date;
+   margin: 0;
+ }
+ 
+-/* Title (full width, authoritative) */
+-.quarto-listing .listing-title {
++.post-card__title {
++  font-size: clamp(1.35rem, 2vw, 1.75rem);
+   grid-area: title;
+-  text-align: left;
+-  margin: 0;
++  line-height: 1.2;
++  margin: 0 0 0.35rem;
+ }
+ 
+-.quarto-listing .listing-title a {
+-  font-size: 1.15em;
+-  font-weight: 600;
+-  letter-spacing: -0.01em;
++main.content .post-card__title a {
++  color: var(--il-accent);
++  text-decoration: none;
+ }
+ 
+-/* Optional separator under title */
+-.quarto-listing .listing-title::after {
+-  content: "";
+-  display: block;
+-  border-bottom: 1px solid var(--brand-border);
+-  margin-top: 0.5rem;
++main.content .post-card__title a:hover {
++  color: var(--il-accent-hover);
++  text-decoration: none;
+ }
+ 
+-/* Image left */
+-.quarto-listing .listing-image {
++.post-card__image {
++  display: block;
+   grid-area: image;
+ }
+ 
+-.quarto-listing .listing-image img {
+-  border-radius: 6px;
+-  border: 1px solid var(--brand-border);
+-  background: white;
++.post-card__image img {
++  aspect-ratio: 16 / 10;
++  background: var(--il-image-bg);
++  border: 1px solid var(--il-border);
++  border-radius: var(--il-radius);
++  display: block;
++  object-fit: contain;
++  padding: 0.5rem;
++  width: 100%;
+ }
+ 
+-/* Abstract right */
+-.quarto-listing .listing-description {
+-  grid-area: abstract;
+-  margin: 0;
++.post-card__description {
++  align-self: start;
++  color: var(--il-text);
++  font-size: 1.02rem;
++  grid-area: description;
++  line-height: 1.65;
+ }
+ 
+-/* ---------- Mobile: collapse to single column ---------- */
+-@media (max-width: 768px) {
+-  .quarto-listing .listing-item {
+-    grid-template-columns: 1fr;
+-    grid-template-areas:
+-      "date"
+-      "title"
+-      "image"
+-      "abstract";
+-  }
+-
+-  .quarto-listing .listing-image {
+-    margin-bottom: 0.5rem;
+-  }
++.post-card__description > :first-child {
++  margin-top: 0;
+ }
+ 
+-/* --- Homepage listing layout: date, full-width title, image left + abstract right --- */
+-#listing-listing .list > li {
+-  margin-bottom: 1.25rem;
+-  padding-bottom: 1.25rem;
+-  border-bottom: 1px solid rgba(0,0,0,0.12);
++.post-card__description > :last-child {
++  margin-bottom: 0;
+ }
+ 
+-/* Make each listing item a grid */
+-#listing-listing .list > li .quarto-post {
+-  display: grid;
+-  grid-template-columns: 220px 1fr;
+-  grid-template-areas:
+-    "date date"
+-    "title title"
+-    "image abstract";
+-  column-gap: 1.25rem;
+-  row-gap: 0.35rem;
+-  align-items: start;
++/* Contact form */
++
++.contact-form {
++  max-width: 42rem;
+ }
+ 
+-/* Ensure the Quarto listing fields map into the grid */
+-#listing-listing .list > li .listing-date    { grid-area: date; }
+-#listing-listing .list > li .listing-title   { grid-area: title; }
+-#listing-listing .list > li .listing-image   { grid-area: image; }
+-#listing-listing .list > li .listing-abstract{ grid-area: abstract; }
+-
+-/* Title full-width + spacing */
+-#listing-listing .list > li .listing-title a {
+-  display: inline-block;
+-  text-decoration: none;
++.contact-field {
++  margin: 1.1rem 0;
+ }
+ 
+-/* Image sizing */
+-#listing-listing .list > li .listing-image img {
+-  width: 100%;
+-  height: auto;
++.contact-field label {
+   display: block;
+-  border-radius: 0.5rem;
++  font-weight: 600;
++  margin-bottom: 0.35rem;
+ }
+ 
+-/* Abstract formatting */
+-#listing-listing .list > li .listing-abstract {
+-  margin-top: 0.15rem;
++.contact-field input,
++.contact-field textarea {
++  background: var(--bs-body-bg);
++  border: 1px solid var(--il-border);
++  border-radius: var(--il-radius);
++  color: var(--bs-body-color);
++  padding: 0.7rem 0.8rem;
++  width: 100%;
+ }
+ 
+-/* Mobile: stack */
+-@media (max-width: 768px) {
+-  #listing-listing .list > li .quarto-post {
+-    grid-template-columns: 1fr;
+-    grid-template-areas:
+-      "date"
+-      "title"
+-      "image"
+-      "abstract";
+-  }
++.contact-field textarea {
++  resize: vertical;
+ }
+ 
+-/* --- Listing layout fix (Quarto "container-default" + .quarto-post.image-right) --- */
+-#listing-listing .quarto-post {
+-  display: grid;
+-  grid-template-columns: 240px 1fr;
+-  grid-template-areas:
+-    "date date"
+-    "title title"
+-    "thumb abstract";
+-  column-gap: 1.25rem;
+-  row-gap: 0.4rem;
+-  align-items: start;
+-  margin-bottom: 1.25rem;
+-  padding-bottom: 1.25rem;
+-  border-bottom: 1px solid rgba(0,0,0,0.12);
+-}
+-
+-/* Map existing elements into the grid */
+-#listing-listing .quarto-post .thumbnail { grid-area: thumb; }
+-#listing-listing .quarto-post .body      { grid-area: title; }
+-#listing-listing .quarto-post .metadata  { grid-area: date; }
+-
+-/* Pull abstract out so it sits to the right of the image */
+-#listing-listing .quarto-post .metadata .listing-abstract {
+-  grid-area: abstract;
+-  margin-top: 0.25rem;
++.contact-form button {
++  background: #0b5fff;
++  border: 0;
++  border-radius: var(--il-radius);
++  color: #ffffff;
++  cursor: pointer;
++  font-weight: 650;
++  padding: 0.65rem 1.15rem;
+ }
+ 
+-/* Make metadata itself act like a grid to place date + abstract */
+-#listing-listing .quarto-post .metadata a {
+-  display: grid;
+-  grid-template-columns: 240px 1fr;
+-  grid-template-areas:
+-    "date date"
+-    "abstract abstract";
+-  row-gap: 0.25rem;
+-  text-decoration: none;
++.contact-form button:hover {
++  background: #0847c7;
+ }
+ 
+-/* Keep date styled normally, just place it */
+-#listing-listing .quarto-post .listing-date { grid-area: date; }
+-
+-/* Place abstract in its area */
+-#listing-listing .quarto-post .listing-abstract { grid-area: abstract; }
+-
+-/* Image sizing */
+-#listing-listing .quarto-post .thumbnail img.thumbnail-image {
+-  width: 100%;
+-  height: auto !important;   /* override inline height if needed */
+-  max-height: none;
+-  display: block;
+-  border-radius: 0.5rem;
++.honeypot {
++  height: 1px;
++  left: -10000px;
++  overflow: hidden;
++  position: absolute;
++  width: 1px;
+ }
+ 
+-/* Title full-width */
+-#listing-listing .quarto-post .listing-title a {
+-  text-decoration: none;
++.nav-footer {
++  border-top: 1px solid var(--il-border);
+ }
+ 
+-/* Mobile: stack */
+-@media (max-width: 768px) {
+-  #listing-listing .quarto-post {
+-    grid-template-columns: 1fr;
++@media (max-width: 48rem) {
++  .post-card {
+     grid-template-areas:
+       "date"
+       "title"
+-      "thumb"
+-      "abstract";
++      "image"
++      "description";
++    grid-template-columns: minmax(0, 1fr);
+   }
+-  #listing-listing .quarto-post .metadata a {
+-    grid-template-columns: 1fr;
++
++  .post-card__image {
++    max-width: 24rem;
+   }
+ }
+ 
++@media (prefers-reduced-motion: reduce) {
++  html {
++    scroll-behavior: auto;
++  }
++}

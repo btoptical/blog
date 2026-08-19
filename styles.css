@@ -1,54 +1,91 @@
-/* =========================================================
-   InfiniteLimit.ai — industry thought leadership style
-   ========================================================= */
+/* Infinite Limit: site-level design tokens and components. */
 
-/* ---------- Brand tokens ---------- */
 :root {
-  --brand-primary: #0b5fff;   /* signal blue */
-  --brand-muted: #6b7280;     /* neutral gray */
-  --brand-bg-soft: #f8fafc;   /* soft panel */
-  --brand-border: #e5e7eb;
+  --il-accent: #0b5fff;
+  --il-accent-hover: #0847c7;
+  --il-text: #18212f;
+  --il-muted: #667085;
+  --il-surface: #f7f9fc;
+  --il-border: #dfe4ec;
+  --il-image-bg: #ffffff;
+  --il-page-width: 72rem;
+  --il-radius: 0.5rem;
 }
 
-/* ---------- Layout & rhythm ---------- */
-.page-columns {
-  max-width: 1080px;
+body.quarto-dark {
+  --il-accent: #8db5ff;
+  --il-accent-hover: #b8d0ff;
+  --il-text: #edf2f7;
+  --il-muted: #aab4c3;
+  --il-surface: #1d2531;
+  --il-border: #3a4657;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  color: var(--il-text);
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
   letter-spacing: -0.01em;
 }
 
-/* ---------- Typography ---------- */
-h1, h2, h3 {
-  font-weight: 600;
-  letter-spacing: -0.02em;
+code,
+pre {
+  border-radius: 0.4rem;
+  font-family: ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono",
+    monospace;
 }
 
-/* ---------- Links ---------- */
-a {
-  color: var(--brand-primary);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+.page-columns,
+.navbar-container {
+  max-width: var(--il-page-width);
 }
-a:hover {
+
+h1,
+h2,
+h3 {
+  font-weight: 650;
+  letter-spacing: -0.025em;
+}
+
+main.content a {
+  color: var(--il-accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+main.content a:hover {
+  color: var(--il-accent-hover);
   text-decoration: underline;
 }
 
-/* ---------- Code & callouts ---------- */
-pre,
-code {
-  border-radius: 6px;
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 3px solid var(--il-accent);
+  outline-offset: 3px;
+}
+
+hr {
+  border-top: 1px solid var(--il-border);
+  margin: 3rem 0;
+  opacity: 1;
+}
+
+blockquote {
+  border-left: 3px solid var(--il-border);
+  color: var(--il-muted);
+  font-style: normal;
+  padding-left: 1rem;
 }
 
 .callout {
-  border-left: 3px solid var(--brand-primary);
-  background: var(--brand-bg-soft);
+  border-left-width: 3px;
 }
 
-/* ---------- Figures (light + dark safe) ---------- */
 figure figcaption {
-  color: var(--brand-muted);
+  color: var(--il-muted);
   font-size: 0.9em;
   margin-top: 0.5em;
 }
@@ -56,292 +93,205 @@ figure figcaption {
 figure img,
 figure svg {
   display: block;
-  margin: 0 auto;
+  margin-inline: auto;
 }
 
-html[data-bs-theme="dark"] figure {
-  background: var(--brand-bg-soft);
+body.quarto-dark figure:has(img[src$=".svg"]) {
+  background: var(--il-image-bg);
+  border-radius: var(--il-radius);
   padding: 0.75rem;
-  border-radius: 6px;
 }
 
-html[data-bs-theme="dark"] figure img,
-html[data-bs-theme="dark"] figure svg {
-  border: 1px solid var(--brand-border);
+body.quarto-dark figure:has(img[src$=".svg"]) figcaption {
+  color: #4b5563;
 }
 
-/* ---------- Structural separators ---------- */
-hr {
-  border-top: 1px solid var(--brand-border);
-  margin: 3rem 0;
-}
+/* Navbar */
 
-/* ---------- Blockquotes ---------- */
-blockquote {
-  border-left: 3px solid var(--brand-border);
-  padding-left: 1rem;
-  color: #374151;
-  font-style: normal;
-}
-
-/* ---------- Navbar ---------- */
 .navbar {
-  padding: 0.75rem 0;
+  background: var(--bs-body-bg);
+  border-bottom: 1px solid var(--il-border);
+  margin: 0;
+  min-height: 4.5rem;
+  padding: 0.35rem 0;
 }
 
 .navbar-brand img {
-  height: 100px !important;
-  max-height: none !important;
-  width: auto !important;
+  height: 3.5rem;
+  max-height: 3.5rem;
+  width: auto;
 }
 
-.navbar,
-.navbar .navbar-brand {
-  min-height: 100px;
-  display: flex;
-  align-items: center;
-}
-
-.site-wordmark {
-  font-family: Inter, system-ui, sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-}
-
-.navbar .math {
-  font-size: 1.2rem;
-}
-
-.subnav {
-  background: var(--bg-main);
-  border-bottom: 1px solid var(--brand-border);
+.navbar .nav-link,
+.navbar .quarto-navigation-tool {
+  color: var(--il-text);
   font-size: 0.95rem;
-}
-.subnav-inner {
-  max-width: 1080px;
-  margin: 0 auto;
-  padding: 0.35rem 1rem;
-  display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-}
-.subnav a { text-decoration: none; opacity: 0.85; }
-.subnav a:hover { opacity: 1; text-decoration: underline; }
-
-/* push main navbar down a bit */
-.navbar { margin-top: 2.0rem; }
-
-
-/* =========================================================
-   Landing page listing layout
-   Date
-   Title
-   [ Image ]  Abstract
-   ========================================================= */
-
-.quarto-listing .listing-item {
-  display: grid;
-  grid-template-columns: 160px 1fr;
-  grid-template-areas:
-    "date date"
-    "title title"
-    "image abstract";
-  column-gap: 1.5rem;
-  row-gap: 0.5rem;
-  align-items: start;
-}
-
-/* Date (unchanged size, subdued tone) */
-.quarto-listing .listing-date {
-  grid-area: date;
-  color: var(--brand-muted);
-  font-size: 0.9em;
-  margin: 0;
-}
-
-/* Title (full width, authoritative) */
-.quarto-listing .listing-title {
-  grid-area: title;
-  text-align: left;
-  margin: 0;
-}
-
-.quarto-listing .listing-title a {
-  font-size: 1.15em;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* Optional separator under title */
-.quarto-listing .listing-title::after {
-  content: "";
-  display: block;
-  border-bottom: 1px solid var(--brand-border);
-  margin-top: 0.5rem;
-}
-
-/* Image left */
-.quarto-listing .listing-image {
-  grid-area: image;
-}
-
-.quarto-listing .listing-image img {
-  border-radius: 6px;
-  border: 1px solid var(--brand-border);
-  background: white;
-}
-
-/* Abstract right */
-.quarto-listing .listing-description {
-  grid-area: abstract;
-  margin: 0;
-}
-
-/* ---------- Mobile: collapse to single column ---------- */
-@media (max-width: 768px) {
-  .quarto-listing .listing-item {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "date"
-      "title"
-      "image"
-      "abstract";
-  }
-
-  .quarto-listing .listing-image {
-    margin-bottom: 0.5rem;
-  }
-}
-
-/* --- Homepage listing layout: date, full-width title, image left + abstract right --- */
-#listing-listing .list > li {
-  margin-bottom: 1.25rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(0,0,0,0.12);
-}
-
-/* Make each listing item a grid */
-#listing-listing .list > li .quarto-post {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  grid-template-areas:
-    "date date"
-    "title title"
-    "image abstract";
-  column-gap: 1.25rem;
-  row-gap: 0.35rem;
-  align-items: start;
-}
-
-/* Ensure the Quarto listing fields map into the grid */
-#listing-listing .list > li .listing-date    { grid-area: date; }
-#listing-listing .list > li .listing-title   { grid-area: title; }
-#listing-listing .list > li .listing-image   { grid-area: image; }
-#listing-listing .list > li .listing-abstract{ grid-area: abstract; }
-
-/* Title full-width + spacing */
-#listing-listing .list > li .listing-title a {
-  display: inline-block;
+  font-weight: 550;
   text-decoration: none;
 }
 
-/* Image sizing */
-#listing-listing .list > li .listing-image img {
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 0.5rem;
+.navbar .nav-link:hover,
+.navbar .nav-link.active,
+.navbar .quarto-navigation-tool:hover {
+  color: var(--il-accent);
 }
 
-/* Abstract formatting */
-#listing-listing .list > li .listing-abstract {
-  margin-top: 0.15rem;
+body.quarto-dark .navbar-brand img,
+body.quarto-dark .navbar-toggler-icon {
+  filter: invert(1);
 }
 
-/* Mobile: stack */
-@media (max-width: 768px) {
-  #listing-listing .list > li .quarto-post {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "date"
-      "title"
-      "image"
-      "abstract";
-  }
-}
+/* Homepage listing: date, title, then image beside description. */
 
-/* --- Listing layout fix (Quarto "container-default" + .quarto-post.image-right) --- */
-#listing-listing .quarto-post {
-  display: grid;
-  grid-template-columns: 240px 1fr;
-  grid-template-areas:
-    "date date"
-    "title title"
-    "thumb abstract";
-  column-gap: 1.25rem;
-  row-gap: 0.4rem;
-  align-items: start;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(0,0,0,0.12);
-}
-
-/* Map existing elements into the grid */
-#listing-listing .quarto-post .thumbnail { grid-area: thumb; }
-#listing-listing .quarto-post .body      { grid-area: title; }
-#listing-listing .quarto-post .metadata  { grid-area: date; }
-
-/* Pull abstract out so it sits to the right of the image */
-#listing-listing .quarto-post .metadata .listing-abstract {
-  grid-area: abstract;
+.post-list {
   margin-top: 0.25rem;
 }
 
-/* Make metadata itself act like a grid to place date + abstract */
-#listing-listing .quarto-post .metadata a {
+.post-card {
+  border-bottom: 1px solid var(--il-border);
   display: grid;
-  grid-template-columns: 240px 1fr;
+  gap: 0.55rem 1.5rem;
   grid-template-areas:
     "date date"
-    "abstract abstract";
-  row-gap: 0.25rem;
+    "title title"
+    "image description";
+  grid-template-columns: minmax(11rem, 15rem) minmax(0, 1fr);
+  padding: 1.75rem 0 2rem;
+}
+
+.post-card:first-child {
+  padding-top: 0.5rem;
+}
+
+.post-card__date {
+  color: var(--il-muted);
+  font-size: 0.9em;
+  grid-area: date;
+  margin: 0;
+}
+
+.post-card__title {
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  grid-area: title;
+  line-height: 1.2;
+  margin: 0 0 0.35rem;
+}
+
+main.content .post-card__title a {
+  color: var(--il-accent);
   text-decoration: none;
 }
 
-/* Keep date styled normally, just place it */
-#listing-listing .quarto-post .listing-date { grid-area: date; }
+main.content .post-card__title a:hover {
+  color: var(--il-accent-hover);
+  text-decoration: none;
+}
 
-/* Place abstract in its area */
-#listing-listing .quarto-post .listing-abstract { grid-area: abstract; }
-
-/* Image sizing */
-#listing-listing .quarto-post .thumbnail img.thumbnail-image {
-  width: 100%;
-  height: auto !important;   /* override inline height if needed */
-  max-height: none;
+.post-card__image {
   display: block;
-  border-radius: 0.5rem;
+  grid-area: image;
 }
 
-/* Title full-width */
-#listing-listing .quarto-post .listing-title a {
-  text-decoration: none;
+.post-card__image img {
+  aspect-ratio: 16 / 10;
+  background: var(--il-image-bg);
+  border: 1px solid var(--il-border);
+  border-radius: var(--il-radius);
+  display: block;
+  object-fit: contain;
+  padding: 0.5rem;
+  width: 100%;
 }
 
-/* Mobile: stack */
-@media (max-width: 768px) {
-  #listing-listing .quarto-post {
-    grid-template-columns: 1fr;
+.post-card__description {
+  align-self: start;
+  color: var(--il-text);
+  font-size: 1.02rem;
+  grid-area: description;
+  line-height: 1.65;
+}
+
+.post-card__description > :first-child {
+  margin-top: 0;
+}
+
+.post-card__description > :last-child {
+  margin-bottom: 0;
+}
+
+/* Contact form */
+
+.contact-form {
+  max-width: 42rem;
+}
+
+.contact-field {
+  margin: 1.1rem 0;
+}
+
+.contact-field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+.contact-field input,
+.contact-field textarea {
+  background: var(--bs-body-bg);
+  border: 1px solid var(--il-border);
+  border-radius: var(--il-radius);
+  color: var(--bs-body-color);
+  padding: 0.7rem 0.8rem;
+  width: 100%;
+}
+
+.contact-field textarea {
+  resize: vertical;
+}
+
+.contact-form button {
+  background: #0b5fff;
+  border: 0;
+  border-radius: var(--il-radius);
+  color: #ffffff;
+  cursor: pointer;
+  font-weight: 650;
+  padding: 0.65rem 1.15rem;
+}
+
+.contact-form button:hover {
+  background: #0847c7;
+}
+
+.honeypot {
+  height: 1px;
+  left: -10000px;
+  overflow: hidden;
+  position: absolute;
+  width: 1px;
+}
+
+.nav-footer {
+  border-top: 1px solid var(--il-border);
+}
+
+@media (max-width: 48rem) {
+  .post-card {
     grid-template-areas:
       "date"
       "title"
-      "thumb"
-      "abstract";
+      "image"
+      "description";
+    grid-template-columns: minmax(0, 1fr);
   }
-  #listing-listing .quarto-post .metadata a {
-    grid-template-columns: 1fr;
+
+  .post-card__image {
+    max-width: 24rem;
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

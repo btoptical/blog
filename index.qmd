@@ -1,12 +1,12 @@
 ---
 title: ""
 listing:
-  contents:
-    - posts/*.qmd
-  type: default
-  sort: date desc
-  categories: true
-  page-size: 10
-  fields: [date, title, image, abstract]
-  image-height: 160px
+  contents: posts
+  template: _templates/post-listing.ejs.md
+  sort: "date desc"
+  date-format: long
+  field-required: [title, date, description]
+  feed:
+    type: partial
+    items: 20
 ---

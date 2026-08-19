@@ -2,9 +2,9 @@
 title: "On Infinite Limits"
 date: 2026-01-06
 categories: [Performance]
-abstract: |
-  Real systems approach limits long before theory reaches infinity.
+description: "Real systems approach limits long before theory reaches infinity."
 image: /images/limit.svg
+image-alt: "A performance curve that saturates well before the theoretical limit."
 ---
 
 ## Motivation
@@ -22,4 +22,3 @@ is useful precisely because it highlights where practice diverges from abstracti
 ## Diagram
 
 ![Performance saturates well before theoretical infinity.](../images/limit.svg)
-

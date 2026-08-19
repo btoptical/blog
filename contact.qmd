@@ -2,32 +2,33 @@
 title: "Contact"
 ---
 
-Get in touch.  Your email won't be sold and I won't send you spam.
+Get in touch.  Your email will only be used to reply to this message.
 
 ```{=html}
-<form action="https://formspree.io/f/mwvpgrez" method="POST">
+<form class="contact-form" action="https://formspree.io/f/mwvpgrez" method="POST">
   <div class="contact-field">
-    <label for="name">Name</label><br>
-    <input id="name" type="text" name="name" required>
+    <label for="name">Name</label>
+    <input id="name" type="text" name="name" autocomplete="name" required>
   </div>
 
   <div class="contact-field">
-    <label for="email">Email (so I can reply)</label><br>
-    <input id="email" type="email" name="email" required>
+    <label for="email">Email</label>
+    <input id="email" type="email" name="email" autocomplete="email" required>
   </div>
 
   <div class="contact-field">
-    <label for="message">Message</label><br>
+    <label for="message">Message</label>
     <textarea id="message" name="message" rows="7" required></textarea>
   </div>
 
-  <!-- Honeypot -->
-  <input type="text" name="_gotcha" style="display:none">
+  <div class="honeypot" aria-hidden="true">
+    <label for="company">Company</label>
+    <input id="company" type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+  </div>
 
   <input type="hidden" name="_subject" value="New message from Infinite Limit">
+  <input type="hidden" name="_next" value="https://infinitelimit.ai/thanks.html">
 
   <button type="submit">Send</button>
-  <input type="hidden" name="_next" value="/thanks.html">
-
 </form>
 ```
