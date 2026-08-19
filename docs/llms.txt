@@ -1,0 +1,11 @@
+# Infinite Limit
+
+> Notes and essays on AI infrastructure, systems architecture, scaling, and physical limits.
+
+## Pages
+
+- [Thanks](https://infinitelimit.ai/thanks.llms.md)
+- [index](https://infinitelimit.ai/index.llms.md)
+- [About](https://infinitelimit.ai/about.llms.md)
+- [Contact](https://infinitelimit.ai/contact.llms.md)
+- [On Infinite Limits](https://infinitelimit.ai/posts/2026-01-06-infinite-limit.llms.md)

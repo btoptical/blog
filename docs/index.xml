@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Infinite Limit</title>
+<link>https://infinitelimit.ai/</link>
+<atom:link href="https://infinitelimit.ai/index.xml" rel="self" type="application/rss+xml"/>
+<description>Notes and essays on AI infrastructure, systems architecture, scaling, and physical limits.</description>
+<generator>quarto-1.10.18</generator>
+<lastBuildDate>Tue, 06 Jan 2026 08:00:00 GMT</lastBuildDate>
+<item>
+  <title>On Infinite Limits</title>
+  <link>https://infinitelimit.ai/posts/2026-01-06-infinite-limit.html</link>
+  <description><![CDATA[ Real systems approach limits long before theory reaches infinity. ]]></description>
+  <category>Performance</category>
+  <guid>https://infinitelimit.ai/posts/2026-01-06-infinite-limit.html</guid>
+  <pubDate>Tue, 06 Jan 2026 08:00:00 GMT</pubDate>
+  <media:content url="https://infinitelimit.ai/images/limit.svg" medium="image" type="image/svg+xml"/>
+</item>
+</channel>
+</rss>

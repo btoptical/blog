@@ -1,0 +1,32 @@
+/* Light-mode navbar colors. Dark mode continues to use the darkly theme. */
+body.quarto-light #quarto-header .navbar {
+  --bs-navbar-color: rgba(255, 255, 255, 0.9);
+  --bs-navbar-hover-color: #fff;
+  --bs-navbar-active-color: #fff;
+  --bs-navbar-brand-color: #fff;
+  --bs-navbar-brand-hover-color: #fff;
+  --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.45);
+  background-color: #5b7fa0;
+  color: #fff;
+}
+
+body.quarto-light #quarto-header .navbar .nav-link,
+body.quarto-light #quarto-header .navbar .navbar-brand,
+body.quarto-light #quarto-header .navbar .quarto-navigation-tool,
+body.quarto-light #quarto-header .navbar .quarto-color-scheme-toggle,
+body.quarto-light #quarto-header .navbar .quarto-color-scheme-toggle .bi {
+  color: #fff;
+}
+
+body.quarto-light #quarto-header .navbar .nav-link:hover,
+body.quarto-light #quarto-header .navbar .nav-link:focus,
+body.quarto-light #quarto-header .navbar .quarto-navigation-tool:hover,
+body.quarto-light #quarto-header .navbar .quarto-navigation-tool:focus {
+  color: #fff;
+  opacity: 0.8;
+}
+
+body.quarto-light #quarto-header .navbar-toggler {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.45);
+}

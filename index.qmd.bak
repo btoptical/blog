@@ -5,6 +5,7 @@ listing:
   template: _templates/post-listing.ejs.md
   sort: "date desc"
   date-format: long
+  field-required: [title, date, description]
   feed:
     type: partial
     items: 20

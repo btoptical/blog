@@ -23,8 +23,6 @@ website:
 
   navbar:
     title: false
-    background: light
-    foreground: dark
     search: false
     logo: images/logo-navbar.svg
     logo-alt: "Infinite Limit"
@@ -46,6 +44,7 @@ format:
   html:
     css:
       - styles.css
+      - navbar-light.css
       - print.css
     theme:
       light: default
