@@ -1,0 +1,11 @@
+comments:
+  giscus:
+    repo: btoptical/blog
+    category: Announcements
+    mapping: pathname
+    reactions-enabled: true
+    input-position: bottom
+    loading: lazy
+    theme:
+      light: light
+      dark: dark_dimmed
