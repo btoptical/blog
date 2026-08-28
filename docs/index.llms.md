@@ -1,3 +1,9 @@
+August 27, 2026
+
+## [Amdahl's Law: The Speedup You Cannot Exceed](posts/2026-08-27-amdahls-law/index.llms.md)
+
+A reference post defining Amdahl's law in words and mathematics.
+
 January 6, 2026
 
 ## [On Infinite Limits](posts/2026-01-06-infinite-limit.llms.md)

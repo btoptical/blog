@@ -7,27 +7,6 @@
     "text": "Your message was sent successfully. I’ll get back to you soon."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Infinite Limit",
-    "section": "",
-    "text": "January 6, 2026\n\n    \n      On Infinite Limits\n    \n\n    \n    \n      \n    \n    \n\n    \n      Real systems approach limits long before theory reaches infinity.\n    \n  \n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "Most of the interesting problems in modern computing live near a boundary.\nInfinite Limit is a personal writing space focused on large-scale compute and networking systems. These systems are inherently interdisciplinary—spanning silicon, memory, interconnect, software, and architecture—and cannot be understood through any single lens. AI-driven infrastructure is changing rapidly, and in ways that are fundamentally different from traditional general-purpose compute and networking. Scale, specialization, and tight coupling between components mean that many of our inherited intuitions no longer hold. Assumptions that worked for CPUs, cache hierarchies, or enterprise networks often break down when applied to modern accelerator-based systems. Much of the work in this space is therefore exploratory. We are learning in real time: identifying new bottlenecks, revisiting old abstractions, and developing better mental models for how these systems actually behave under load and at scale.\nThe goal of this writing is to reason clearly about those transitions—where limits come from, which ones matter, and how system behavior changes as we approach them.\nThe mark that anchors this site,\n\\[\n{\\LARGE \\lim_{n \\to \\infty}}\n\\] is intentional. It represents an infinite process that converges to something finite and meaningful—an idea that appears repeatedly in systems engineering.\nThe views expressed here are my own and do not reflect the views or positions of my employer or any organization I am affiliated with."
-  },
-  {
-    "objectID": "contact.html",
-    "href": "contact.html",
-    "title": "Contact",
-    "section": "",
-    "text": "Get in touch. Your email will only be used to reply to this message.\n\n  \n    Name\n    \n  \n\n  \n    Email\n    \n  \n\n  \n    Message\n    \n  \n\n  \n    Company\n    \n  \n\n  \n  \n\n  Send"
-  },
-  {
     "objectID": "posts/2026-01-06-infinite-limit.html",
     "href": "posts/2026-01-06-infinite-limit.html",
     "title": "On Infinite Limits",
@@ -47,5 +26,110 @@
     "title": "On Infinite Limits",
     "section": "Diagram",
     "text": "Diagram\n\n\n\nPerformance saturates well before theoretical infinity."
+  },
+  {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Contact",
+    "section": "",
+    "text": "Get in touch. Your email will only be used to reply to this message.\n\n  \n    Name\n    \n  \n\n  \n    Email\n    \n  \n\n  \n    Message\n    \n  \n\n  \n    Company\n    \n  \n\n  \n  \n\n  Send"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Most of the interesting problems in modern computing live near a boundary.\nInfinite Limit is a personal writing space focused on large-scale compute and networking systems. These systems are inherently interdisciplinary—spanning silicon, memory, interconnect, software, and architecture—and cannot be understood through any single lens. AI-driven infrastructure is changing rapidly, and in ways that are fundamentally different from traditional general-purpose compute and networking. Scale, specialization, and tight coupling between components mean that many of our inherited intuitions no longer hold. Assumptions that worked for CPUs, cache hierarchies, or enterprise networks often break down when applied to modern accelerator-based systems. Much of the work in this space is therefore exploratory. We are learning in real time: identifying new bottlenecks, revisiting old abstractions, and developing better mental models for how these systems actually behave under load and at scale.\nThe goal of this writing is to reason clearly about those transitions—where limits come from, which ones matter, and how system behavior changes as we approach them.\nThe mark that anchors this site,\n\\[\n{\\LARGE \\lim_{n \\to \\infty}}\n\\] is intentional. It represents an infinite process that converges to something finite and meaningful—an idea that appears repeatedly in systems engineering.\nThe views expressed here are my own and do not reflect the views or positions of my employer or any organization I am affiliated with."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Infinite Limit",
+    "section": "",
+    "text": "August 27, 2026\n\n    \n      Amdahl's Law: The Speedup You Cannot Exceed\n    \n\n    \n\n    \n      A reference post defining Amdahl's law in words and mathematics.\n    \n  \n\n  \n    January 6, 2026\n\n    \n      On Infinite Limits\n    \n\n    \n    \n      \n    \n    \n\n    \n      Real systems approach limits long before theory reaches infinity.\n    \n  \n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html",
+    "href": "posts/2026-08-27-amdahls-law/index.html",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "",
+    "text": "Welcome to Infinite Limit. This is first in a series where we ask a single question asked over and over in different settings: what happens as \\(N\\) becomes very large? It seemed fitting to start with Amdahl’s law."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-introduction",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-introduction",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "Introduction",
+    "text": "Introduction\nI felt a review of Amdahl’s law was an appropriate first post for Infinite Limit as it represents the spirit of what I’m trying to achieve on this platform; explore how things scale as \\(N\\) becomes very large. While not exclusively limited to photonics, it’s common that photonics people often start with a component improvement and make claims about how that improvement improves the overall system. This is also true of other components in the stack: network becomes four times faster, kernel becomes ten times faster, a section of code is spread across hundreds of processors. However what’s often missing is not how much faster that component becomes, it is how much of the original wall clock time belonged to that component in the first place.\nAmdahl’s law is the accounting rule that connects those two quantities. It prevents a local speedup from being reported as though the whole workload received the same benefit. Before we begin, let’s define what wall clock time is."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-wall-clock",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-wall-clock",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "Wall-clock time",
+    "text": "Wall-clock time\nWall-clock time is defined as the actual elapsed time between the defined start and completion of a workload, as measured by an external (wall) clock:\n\\[\nT_{\\mathrm{wall}} = t_{\\mathrm{finish}} - t_{\\mathrm{start}}.\n\\tag{1}\\]\nWall-clock time includes every activity that delays completion: computation, communication, memory stalls, synchronization, queueing, data movement, software overhead, and idle time. Work performed concurrently by multiple processors is not added together. It is counted only through its effect on the elapsed completion time.\nThis distinction is essential when applying Amdahl’s law because it predicts change in total elapsed time and not in units of work or resource consumption. FLOP counts and bytes transferred measure amounts of work and not the time that work delays completion. The affected fraction \\(f\\) must be a fraction of baseline wall-clock time on the workload’s critical path. It cannot be inferred directly from FLOP counts, bytes transferred, aggregate processor time, or communication service time."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-amdahl-words",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-amdahl-words",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "Amdahl’s law in words",
+    "text": "Amdahl’s law in words\nNow that we have a definition of what wall clock time means, we need to divide the original execution time into two parts:\n\nthe part affected by the proposed improvement; and\neverything the improvement leaves unchanged.\n\nThe affected part can shrink. The unaffected part remains. Even if the affected part were removed entirely, reduced not merely in duration but to zero, the unaffected work would still be there. This surviving work places a hard ceiling on total possible speedup from this improvement.\nThis may seem like a subtle point but the word affected is important here. For example, if communication overlaps useful computation, only the communication time exposed on the critical path belongs in the affected fraction: bytes moved, link utilization, or aggregate service time do not automatically equal removable wall time."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-amdahl-math",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-amdahl-math",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "Amdahl’s law in mathematical form",
+    "text": "Amdahl’s law in mathematical form\nLet \\(f\\) be the fraction of the original wall time affected by an improvement, and let \\(s\\) be the speedup of that affected part. The remaining fraction, \\(1-f\\), is unchanged. The new running time is\n\\[\nT_1 = T_0\\left[(1-f) + \\frac{f}{s}\\right].\n\\tag{2}\\]\nThe total speedup \\(S\\) is simply the ratio of \\(T_0\\) to \\(T_1\\) and therefore\n\\[\nS \\equiv \\frac{T_0}{T_1} = \\frac{1}{(1-f) + f/s}.\n\\tag{3}\\]\nThis is the familiar modern statement of Amdahl’s law you can find in any textbook. Now that we have this general formula, we can parallelize it by substituting for \\(f\\) and \\(s\\). If \\(p\\) is the parallelizable fraction and \\(N\\) processors accelerate that part ideally, then\n\\[\nS(N) = \\frac{1}{(1-p) + p/N}.\n\\tag{4}\\]\nThe two forms are the same model. The general form uses \\(f\\) for any affected component and \\(s\\) for its actual speedup. The parallel form sets \\(f = p\\) and \\(s = N\\).\nIt is worth being explicit about what Equation 4 assumes, because the assumption is generous. Setting \\(s = N\\) says that \\(N\\) processors deliver exactly \\(N\\) times the throughput on the parallel portion, which means coordination is free: no synchronization, no collectives, no load imbalance, no contention for shared memory or fabric. Real systems pay all of those, and the payment generally grows with \\(N\\) rather than staying fixed. The practical consequence is that measured speedup curves do not asymptote toward \\(1/(1-p)\\) from below. They rise, peak at some finite \\(N\\), and then decline as coordination cost overtakes the shrinking parallel work. Amdahl’s law gives the ceiling. It does not promise you get to stand near it, and for interconnect-limited workloads the gap between the two is the whole engineering problem.\n\nThe limiting case\nIf we want to understand what happens when our improvement becomes not merely fast but instantaneous, which is to say physically impossible rather than merely expensive, we simply take the limit as \\(s \\to \\infty\\). The term \\(f/s\\) approaches zero, but \\(1-f\\) remains:\n\\[\nS_{\\max} = \\lim_{s\\to\\infty} S = \\frac{1}{1-f}.\n\\tag{5}\\]\nIf we say only 20% of the original execution time can be improved, then the total workload cannot become more than \\(1/(1-0.20) = 1.25\\) times faster."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-worked-example",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-worked-example",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "A worked example",
+    "text": "A worked example\nLet us suppose a network operation occupies 30% of baseline wall time, so \\(f = 0.30\\). And let’s assume we have invented a new interconnect that makes that operation five times faster, so \\(s = 5\\). And we will normalize the baseline time to 1.0 for easy comparison.\n\\[\n\\frac{T_1}{T_0} = (1-0.30) + \\frac{0.30}{5} = 0.70 + 0.06 = 0.76.\n\\tag{6}\\]\nThe workload is therefore \\(1/0.76 = 1.316\\) times faster, and its wall time falls by 24%. The component improved by \\(5\\times\\), but the full workload improved by only \\(1.316\\times\\). The change is illustrated graphically below.\n\nTwo horizontal bars compare the baseline workload with the workload after a fivefold improvement.  The unchanged 70 percent remains fixed, while the affected 30 percent shrinks to 6 percent, removing 24 percent of baseline wall time.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nA \\(5\\times\\) improvement to 30% of the original workload reduces total wall time by 24%. The unchanged 70% dominates the result.\n\nThe graph makes it clear that a further improvement in this area will only amount to a small overall improvement in system wall clock time. If the interconnect time goes to zero here, the result would still be limited to\n\\[\nS_{\\max} = \\frac{1}{1-0.30} = 1.429.\n\\tag{7}\\]\nIt’s clear that improvement is negligible. What it tells us is once the affected component is fast, we can see that we have quickly reached asymptotia."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-work-backwards",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-work-backwards",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "How to work backwards from a claimed result",
+    "text": "How to work backwards from a claimed result\nIn the hardware renaissance we are currently in, it can be difficult to separate claims that are substantiated from claims that are merely asserted. Amdahl’s law gives us a compact framework for testing how impactful a claimed system speedup can be. Solving Equation 3 for the required affected fraction gives\n\\[\nf_{\\mathrm{required}} = \\frac{1 - 1/S_{\\mathrm{target}}}{1 - 1/s}.\n\\tag{8}\\]\nThis turns a performance claim into a testable question: does the baseline workload actually contain that much wall time in the component being improved?\nFor example, a \\(1.5\\times\\) total speedup requires the following fractions of baseline time:\n\n\n\nTable 1: Affected wall time required for a \\(1.5\\times\\) total speedup.\n\n\n\n\n\n\n\n\n\n\nSpeedup of affected component\nRequired \\(f\\)\nInterpretation\n\n\n\n\n\\(2\\times\\)\n66.7%\nTwo thirds of the original workload must be accelerated.\n\n\n\\(4\\times\\)\n44.4%\nNearly half of the original workload must be accelerated.\n\n\n\\(10\\times\\)\n37.0%\nLarge component speedup still requires more than one third.\n\n\nInfinite\n33.3%\nThis is the absolute lower bound on the affected share."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-mfu",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-mfu",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "Why this matters for Model FLOPs Utilization",
+    "text": "Why this matters for Model FLOPs Utilization\nFor a fixed model, accelerator count, peak throughput convention, and tokens per step, Model FLOPs Utilization, MFU, is inversely proportional to step time:\n\\[\n\\mathrm{MFU} = \\frac{F_{\\mathrm{model/step}}}{T_{\\mathrm{step}}\\, P_{\\mathrm{cluster,peak}}}.\n\\tag{9}\\]\nHere \\(F_{\\mathrm{model/step}}\\) is the FLOPs the model definition requires per step and \\(P_{\\mathrm{cluster,peak}}\\) is the aggregate peak throughput of the cluster under a stated convention. Both are constants of the comparison, which is precisely why the ratio below collapses to a statement about time.\nUnder those fixed comparison conditions,\n\\[\n\\frac{\\mathrm{MFU}_1}{\\mathrm{MFU}_0} = \\frac{T_0}{T_1} = S.\n\\tag{10}\\]\nRaising MFU from 40% to 60% therefore requires a \\(60/40 = 1.5\\times\\) workload speedup. Even if the targeted overhead could be eliminated completely, at least one third of the original step must belong to that overhead:\n\\[\nf_{\\min} = 1 - \\frac{1}{1.5} = \\frac{1}{3}.\n\\tag{11}\\]\nIf the component improves by \\(4\\times\\) rather than disappearing, the required affected share rises to 44.4%. Amdahl’s law does not prove that either fraction exists. It tells us what a training-step trace must show before the MFU claim can close."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-what-law-establishes",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-what-law-establishes",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "What the law does, and does not, establish",
+    "text": "What the law does, and does not, establish\n\nIt is a bound, not a forecast. The equation shows what is possible under its assumptions. It does not demonstrate that the affected fraction is present or that the proposed speedup is achievable.\nThe fractions are measured in baseline wall time. You cannot mix and match wall clock time with FLOP share, byte share, energy share, and device utilization. Those quantities measure work, not time, and the two are not interchangeable.\nOnly exposed time counts. Work that is already hidden behind useful computation is not removable from the critical path a second time.\nThe component speedup must be end to end. A \\(4\\times\\) faster link does not imply a \\(4\\times\\) faster collective after software, protocol, serialization, switching, queueing, and synchronization are included.\nBottlenecks move. Accelerating one stage can expose a different or new limit somewhere else in the system. The simple equation assumes the unchanged part stays unchanged.\nFix the bar. We have to measure consistently. A change in the workload, precision, batch size, processor count, or definition of useful work can invalidate a direct speedup interpretation.\nThe workload is held fixed, and that is the assumption to challenge first. The standard objection to Amdahl’s law is Gustafson’s: in practice we do not run a fixed problem on a bigger machine, we run a bigger problem. If the parallel work grows with \\(N\\) while the serial work stays roughly constant, then \\(p\\) is not a constant of the system and the ceiling \\(1/(1-p)\\) moves with problem size. This is a real and important effect, and it is why large-scale simulation and training have been able to use machines that Amdahl’s law, read carelessly, would have declared pointless. But it is not an escape hatch from the accounting. Gustafson’s law describes a different measurement: how much more work you can complete in a fixed time, not how much faster a given workload finishes. Both are legitimate. They answer different questions, and a claim gets to invoke exactly one of them. If a speedup number is quoted for a fixed workload, as MFU-at-fixed-model-and-step comparisons are, then the fixed-workload accounting is the one that applies, and weak scaling is not available as a defense."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-original-paper",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-original-paper",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "The original paper",
+    "text": "The original paper\nGene M. Amdahl introduced the argument in 1967 during a debate about whether large-scale computing should rely on a powerful single processor or on many cooperating processors. His short paper emphasized that real workloads contain sequential, irregular, and coordinating work that limits the return from parallel execution (Amdahl 1967).\nThe original paper contained no equations. Equation 4 is the compact mathematical restatement through which the argument became widely known. The durable contribution is not the notation. It is the insistence that total speedup be calculated from the execution time that can change and the time that cannot. The complete paper is linked through its DOI in the reference below (Amdahl 1967)."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-practical-rule",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-practical-rule",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "The practical rule",
+    "text": "The practical rule\nBefore accepting a system claim, ask for the fraction of baseline wall time affected and its end-to-end speedup. Put both into Equation 3. If the claimed result exceeds the answer, the system claim does not close."
+  },
+  {
+    "objectID": "posts/2026-08-27-amdahls-law/index.html#sec-references",
+    "href": "posts/2026-08-27-amdahls-law/index.html#sec-references",
+    "title": "Amdahl’s Law: The Speedup You Cannot Exceed",
+    "section": "References",
+    "text": "References\n\n\nAmdahl, Gene M. 1967. “Validity of the Single Processor Approach to Achieving Large Scale Computing Capabilities.” Proceedings of the April 18–20, 1967, Spring Joint Computer Conference, AFIPS ’67 (spring), April, 483–85. https://doi.org/10.1145/1465482.1465560."
   }
 ]

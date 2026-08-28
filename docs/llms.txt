@@ -5,7 +5,8 @@
 ## Pages
 
 - [Thanks](https://infinitelimit.ai/thanks.llms.md)
-- [index](https://infinitelimit.ai/index.llms.md)
-- [About](https://infinitelimit.ai/about.llms.md)
-- [Contact](https://infinitelimit.ai/contact.llms.md)
 - [On Infinite Limits](https://infinitelimit.ai/posts/2026-01-06-infinite-limit.llms.md)
+- [Contact](https://infinitelimit.ai/contact.llms.md)
+- [About](https://infinitelimit.ai/about.llms.md)
+- [index](https://infinitelimit.ai/index.llms.md)
+- [Amdahl's Law: The Speedup You Cannot Exceed](https://infinitelimit.ai/posts/2026-08-27-amdahls-law/index.llms.md)

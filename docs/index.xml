@@ -10,7 +10,16 @@
 <atom:link href="https://infinitelimit.ai/index.xml" rel="self" type="application/rss+xml"/>
 <description>Notes and essays on AI infrastructure, systems architecture, scaling, and physical limits.</description>
 <generator>quarto-1.10.18</generator>
-<lastBuildDate>Tue, 06 Jan 2026 08:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 27 Aug 2026 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>Amdahl’s Law: The Speedup You Cannot Exceed</title>
+  <dc:creator>Brian D. Taylor</dc:creator>
+  <link>https://infinitelimit.ai/posts/2026-08-27-amdahls-law/</link>
+  <description><![CDATA[ A reference post defining Amdahl’s law in words and mathematics. ]]></description>
+  <category>Performance</category>
+  <guid>https://infinitelimit.ai/posts/2026-08-27-amdahls-law/</guid>
+  <pubDate>Thu, 27 Aug 2026 07:00:00 GMT</pubDate>
+</item>
 <item>
   <title>On Infinite Limits</title>
   <link>https://infinitelimit.ai/posts/2026-01-06-infinite-limit.html</link>
