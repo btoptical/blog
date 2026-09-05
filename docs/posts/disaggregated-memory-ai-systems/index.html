@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Brian D. Taylor">
+<meta name="dcterms.date" content="2025-12-10">
+<meta name="description" content="Part I develops the roofline model, transformer intensity estimates, two-tier SRAM/HBM analysis, and the I/O ceiling for disaggregated memory.">
+
+<title>Quantifying the Utility of Disaggregated Memory in AI Systems, Part I – Infinite Limit</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/logo-square.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-e44dc3806cfcfbff4aee98d0a0b47eac.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-2d192ff245f4ef1ba3f04a396f3717b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-e44dc3806cfcfbff4aee98d0a0b47eac.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../navbar-light.css">
+<link rel="stylesheet" href="../../print.css">
+<meta property="og:title" content="Quantifying the Utility of Disaggregated Memory in AI Systems, Part I – Infinite Limit">
+<meta property="og:description" content="Part I develops the roofline model, transformer intensity estimates, two-tier SRAM/HBM analysis, and the I/O ceiling for disaggregated memory.">
+<meta property="og:image" content="https://infinitelimit.ai/posts/disaggregated-memory-ai-systems/assets/gpu-growth.png">
+<meta property="og:site_name" content="Infinite Limit">
+<meta property="og:image:height" content="649">
+<meta property="og:image:width" content="1167">
+<meta property="og:image:alt" content="Relative growth of GPU compute throughput and HBM bandwidth from Volta through Blackwell">
+<meta name="twitter:title" content="Quantifying the Utility of Disaggregated Memory in AI Systems, Part I – Infinite Limit">
+<meta name="twitter:description" content="Part I develops the roofline model, transformer intensity estimates, two-tier SRAM/HBM analysis, and the I/O ceiling for disaggregated memory.">
+<meta name="twitter:image" content="https://infinitelimit.ai/posts/disaggregated-memory-ai-systems/assets/gpu-growth.png">
+<meta name="twitter:image-height" content="649">
+<meta name="twitter:image-width" content="1167">
+<meta name="twitter:image:alt" content="Relative growth of GPU compute throughput and HBM bandwidth from Volta through Blackwell">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/logo-navbar.svg" alt="Infinite Limit" class="navbar-logo light-content">
+    <img src="../../images/logo-navbar.svg" alt="Infinite Limit" class="navbar-logo dark-content">
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../"> 
+<span class="menu-text">Writing</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../contact.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="../../index.xml" title="" class="quarto-navigation-tool px-1" aria-label="RSS feed"><i class="bi bi-rss"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#sec-introduction" id="toc-sec-introduction" class="nav-link" data-scroll-target="#sec-introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#sec-purpose" id="toc-sec-purpose" class="nav-link" data-scroll-target="#sec-purpose"><span class="header-section-number">2</span> Purpose and Overview</a></li>
+  <li><a href="#sec-notation" id="toc-sec-notation" class="nav-link" data-scroll-target="#sec-notation"><span class="header-section-number">3</span> Notation (Symbols and Units)</a></li>
+  <li><a href="#sec-roofline" id="toc-sec-roofline" class="nav-link" data-scroll-target="#sec-roofline"><span class="header-section-number">4</span> The Roofline Model</a>
+  <ul class="collapse">
+  <li><a href="#what-is-the-roofline-model" id="toc-what-is-the-roofline-model" class="nav-link" data-scroll-target="#what-is-the-roofline-model"><span class="header-section-number">4.1</span> What is the roofline model?</a></li>
+  <li><a href="#operational-intensity-oi" id="toc-operational-intensity-oi" class="nav-link" data-scroll-target="#operational-intensity-oi"><span class="header-section-number">4.2</span> Operational intensity (OI)</a></li>
+  <li><a href="#machine-balance-mb" id="toc-machine-balance-mb" class="nav-link" data-scroll-target="#machine-balance-mb"><span class="header-section-number">4.3</span> Machine balance (MB)</a></li>
+  <li><a href="#utilization-under-the-roofline" id="toc-utilization-under-the-roofline" class="nav-link" data-scroll-target="#utilization-under-the-roofline"><span class="header-section-number">4.4</span> Utilization under the roofline</a></li>
+  <li><a href="#bandwidth-required-to-become-compute-bound" id="toc-bandwidth-required-to-become-compute-bound" class="nav-link" data-scroll-target="#bandwidth-required-to-become-compute-bound"><span class="header-section-number">4.5</span> Bandwidth required to become compute-bound</a></li>
+  </ul></li>
+  <li><a href="#sec-kernels" id="toc-sec-kernels" class="nav-link" data-scroll-target="#sec-kernels"><span class="header-section-number">5</span> Example Kernels: GEMM and Transformer Blocks</a>
+  <ul class="collapse">
+  <li><a href="#gemm-general-matrix-multiplications" id="toc-gemm-general-matrix-multiplications" class="nav-link" data-scroll-target="#gemm-general-matrix-multiplications"><span class="header-section-number">5.1</span> GEMM (general matrix multiplications)</a></li>
+  <li><a href="#transformer-block-back-of-the-envelope" id="toc-transformer-block-back-of-the-envelope" class="nav-link" data-scroll-target="#transformer-block-back-of-the-envelope"><span class="header-section-number">5.2</span> Transformer block (back-of-the-envelope)</a></li>
+  </ul></li>
+  <li><a href="#sec-two-tier" id="toc-sec-two-tier" class="nav-link" data-scroll-target="#sec-two-tier"><span class="header-section-number">6</span> Two-Tier Memory: SRAM + HBM</a>
+  <ul class="collapse">
+  <li><a href="#sec-sram-worked" id="toc-sec-sram-worked" class="nav-link" data-scroll-target="#sec-sram-worked"><span class="header-section-number">6.1</span> Worked example with an SRAM tier (GB200-class device)</a></li>
+  </ul></li>
+  <li><a href="#sec-disaggregated" id="toc-sec-disaggregated" class="nav-link" data-scroll-target="#sec-disaggregated"><span class="header-section-number">7</span> Disaggregated Memory and the I/O Ceiling</a>
+  <ul class="collapse">
+  <li><a href="#practical-limits-why-disaggregated-memory-is-insufficient-to-achieve-compute-bound-transformer-training-under-current-io-ceilings" id="toc-practical-limits-why-disaggregated-memory-is-insufficient-to-achieve-compute-bound-transformer-training-under-current-io-ceilings" class="nav-link" data-scroll-target="#practical-limits-why-disaggregated-memory-is-insufficient-to-achieve-compute-bound-transformer-training-under-current-io-ceilings"><span class="header-section-number">7.1</span> Practical Limits: Why Disaggregated Memory Is Insufficient to Achieve Compute-Bound Transformer Training Under Current I/O Ceilings</a></li>
+  <li><a href="#a-more-realistic-deployment-disaggregated-memory-as-an-overflow-tier" id="toc-a-more-realistic-deployment-disaggregated-memory-as-an-overflow-tier" class="nav-link" data-scroll-target="#a-more-realistic-deployment-disaggregated-memory-as-an-overflow-tier"><span class="header-section-number">7.2</span> A More Realistic Deployment: Disaggregated Memory as an Overflow Tier</a></li>
+  <li><a href="#is-the-gap-closing-a-generational-trend-view-of-fabric-bandwidth" id="toc-is-the-gap-closing-a-generational-trend-view-of-fabric-bandwidth" class="nav-link" data-scroll-target="#is-the-gap-closing-a-generational-trend-view-of-fabric-bandwidth"><span class="header-section-number">7.3</span> Is the Gap Closing? A Generational Trend View of Fabric Bandwidth</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Quantifying the Utility of Disaggregated Memory in AI Systems, Part I</h1>
+<p class="subtitle lead">An operational- and communication-intensity view of compute, memory, and I/O ceilings</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">AI infrastructure</div>
+    <div class="quarto-category">GPU architecture</div>
+    <div class="quarto-category">HBM</div>
+    <div class="quarto-category">disaggregated memory</div>
+    <div class="quarto-category">performance engineering</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Part I develops the roofline model, transformer intensity estimates, two-tier SRAM/HBM analysis, and the I/O ceiling for disaggregated memory.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Brian D. Taylor </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 10, 2025</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">September 4, 2026</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled" title="Two-part series">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Two-part series
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is Part I of the complete paper. It covers Sections 1–7: the roofline model, operational intensity, transformer kernels, SRAM/HBM tiers, and the disaggregated-memory I/O ceiling. <a href="../disaggregated-memory-ai-systems-part-2/">Continue to Part II</a>, which covers inference, distributed training, design implications, future work, and the conclusion.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Prefer the paper format?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="../../downloads/disaggregated-memory-ai-systems.pdf" target="_blank">Read or download the complete paper (PDF)</a></p>
+</div>
+</div>
+<section id="abstract" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="abstract">Abstract</h2>
+<p>Recent claims around “breakthrough” disaggregated HBM have raised expectations that remote memory fabrics could shift large-scale AI training from being memory-bound to compute-bound. This note grounds those claims in a simple, intensity-based performance model that unifies compute, memory, I/O, and network ceilings. Our scope is deliberately narrow: we ask whether disaggregated memory bandwidth alone can push a transformer training step across the compute-bound ridge point, not whether disaggregated memory has value more broadly (e.g., via added capacity, model fit, or pooling), questions we return to briefly but do not attempt to quantify. Using the roofline framework, we express kernels and training steps in terms of operational intensity (OI) and show that modern transformer workloads typically operate in the 30–80 FLOP/Byte regime. For PFLOP-class accelerators, this implies required per-device bandwidths on the order of 10–40 TB/s to reach the compute roofline, with even higher requirements for future 5–10 PFLOP devices. Existing HBM and plausible on-die SRAM tiers can raise effective bandwidth and utilization but cannot close this gap. We then introduce an I/O ceiling for disaggregated memory and show that even the most aggressive published fabrics (<span class="math inline">\(\lesssim 14\)</span> TB/s) fall one to two orders of magnitude short of the bandwidth needed if remote memory were the limiting tier, and therefore are insufficient to make transformer workloads compute-bound. Extending the same logic to distributed training, we define a communication roofline based on communication intensity (CI) and network bandwidth, and show how collective communication can become the dominant ceiling even when local memory bandwidth is ample. Overall, the framework provides a compact set of equations for diagnosing which ceiling is active and for evaluating architectural proposals, including additional HBM stacks, SRAM tiers, disaggregated memory, or network upgrades, in terms of the operational and communication intensities of real workloads.</p>
+</section>
+<section id="sec-introduction" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="sec-introduction"><span class="header-section-number">1</span> Introduction</h2>
+<p>Recently there has been a surge of excitement around companies claiming breakthroughs in disaggregated HBM, including at least one high-profile acquisition based on the idea that remote HBM could fundamentally shift AI systems from being memory-bound to compute-bound. Given these claims, it is important to ground expectations in first-principles scaling laws that describe how modern AI workloads actually consume compute and memory.</p>
+<p>For today’s large transformer models, the amount of arithmetic performed per byte of memory accessed, known as operational intensity (OI), is relatively low, typically in the 30–80 FLOP/Byte range. To fully utilize PFLOP-class accelerators, a memory system must deliver bandwidth equal to compute/OI, which works out to 10–40 TB/s per device. Current HBM falls short of this threshold, and even adding large, fast SRAM tiers cannot reach the required effective bandwidth. Disaggregated memory fabric links are even further behind, constrained to only a fraction of the bandwidth required to feed modern accelerators at peak. As shown in <a href="#tbl-gpu-growth" class="quarto-xref">Table&nbsp;1</a> and <a href="#fig-gpu-growth" class="quarto-xref">Figure&nbsp;1</a>, peak compute has grown roughly <span class="math inline">\(36\times\)</span> since Volta, while HBM bandwidth has grown only about <span class="math inline">\(9\times\)</span> over the same four generations, so the compute-to-bandwidth gap has itself widened by roughly <span class="math inline">\(4\times\)</span> and continues to widen with each new generation.</p>
+<div id="tbl-gpu-growth" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-gpu-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Representative peak compute throughput and HBM bandwidth across four GPU generations, normalized to Volta (V100) as baseline. All figures are dense (non-sparse) FP16/BF16 throughput for consistency across generations; the Blackwell row reflects the dual-die GB200 superchip, matching the device modeled in the worked example of <a href="#sec-sram-worked" class="quarto-xref">Section&nbsp;6.1</a>.
+</figcaption>
+<div aria-describedby="tbl-gpu-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">GPU Generation</th>
+<th style="text-align: left;">Peak Compute</th>
+<th style="text-align: left;">HBM Bandwidth</th>
+<th style="text-align: left;">Relative Growth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Volta (V100)</td>
+<td style="text-align: left;">0.125 PFLOP/s</td>
+<td style="text-align: left;">0.9 TB/s</td>
+<td style="text-align: left;">Baseline (<span class="math inline">\(1.0\times\)</span> vs.&nbsp;<span class="math inline">\(1.0\times\)</span>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ampere (A100)</td>
+<td style="text-align: left;">0.312 PFLOP/s</td>
+<td style="text-align: left;">1.6 TB/s</td>
+<td style="text-align: left;"><span class="math inline">\(2.5\times\)</span> compute / <span class="math inline">\(1.8\times\)</span> memory</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hopper (H100)</td>
+<td style="text-align: left;">1.0 PFLOP/s</td>
+<td style="text-align: left;">3.35 TB/s</td>
+<td style="text-align: left;"><span class="math inline">\(8.0\times\)</span> compute / <span class="math inline">\(3.7\times\)</span> memory</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blackwell (GB200)</td>
+<td style="text-align: left;">4.5 PFLOP/s</td>
+<td style="text-align: left;">8.0 TB/s</td>
+<td style="text-align: left;"><span class="math inline">\(36\times\)</span> compute / <span class="math inline">\(8.9\times\)</span> memory</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<div id="fig-gpu-growth" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Log-scale line chart showing compute throughput growing faster than HBM bandwidth from Volta through Blackwell">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gpu-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/gpu-growth.svg" class="img-fluid figure-img" alt="Log-scale line chart showing compute throughput growing faster than HBM bandwidth from Volta through Blackwell">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gpu-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Relative growth of compute and HBM bandwidth as a function of GPU generation, plotted directly from the values in <a href="#tbl-gpu-growth" class="quarto-xref">Table&nbsp;1</a> (Volta = <span class="math inline">\(1.0\times\)</span> baseline).
+</figcaption>
+</figure>
+</div>
+<p>We will show that increasing on-package bandwidth (HBM) and adding fast on-die or stacked SRAM tiers can improve utilization, but neither is sufficient to make modern transformer training compute-bound under realistic step-level operational intensities. Disaggregated memory, as we model it here, primarily increases addressable capacity; with current and near-term I/O ceilings it is not expected to move typical transformer workloads into a compute-bound regime. Throughout this note, we therefore focus narrowly on the minimum bandwidth required for modern transformer workloads to become compute-bound at the device level. To maintain analytical clarity, we intentionally omit several practical considerations that further reduce achievable performance in deployed systems, such as latency and RTT sensitivity, bandwidth-delay product constraints, queuing and prefetch depth, granularity and coherence effects, and memory reliability and error rates. Each of these factors lowers effective delivered bandwidth relative to the idealized values considered here; accordingly, the bounds we derive should be interpreted as roofline upper limits rather than predictions of realized utilization. Likewise, we do not attempt to quantify capacity-driven system-level benefits of disaggregated memory (e.g., model fit, memory pooling, or reduced stranding), which are orthogonal to the compute-bound question considered here. Finally, our numerical examples (<a href="#tbl-gpu-growth" class="quarto-xref">Table&nbsp;1</a> and <a href="#sec-two-tier" class="quarto-xref">Section&nbsp;6</a> and <a href="#sec-disaggregated" class="quarto-xref">Section&nbsp;7</a>) are calibrated to NVIDIA-style GPUs with off-chip HBM stacked behind a smaller on-die SRAM tier. Architectures that respond to the same memory wall differently, including wafer-scale designs that keep an entire model in very large on-die SRAM with no off-chip HBM in the critical path or TPU-style pods built around a different optical-circuit-switched fabric, are not modeled here and may face a different balance of ceilings than the one derived below.</p>
+</section>
+<section id="sec-purpose" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="sec-purpose"><span class="header-section-number">2</span> Purpose and Overview</h2>
+<p>Here we provide a compact, reusable set of equations for reasoning about where large-scale AI training is fundamentally limited:</p>
+<ul>
+<li><p>By device compute throughput (FLOP/s),</p></li>
+<li><p>By local memory bandwidth (e.g., HBM and SRAM),</p></li>
+<li><p>By off-package I/O (e.g., NVLink/PCIe/CXL),</p></li>
+<li><p>Or by distributed communication (e.g., all-reduce over a training network).</p></li>
+</ul>
+<p>We use the <strong>roofline model</strong> <span class="citation" data-cites="williams2009">(<a href="#ref-williams2009" role="doc-biblioref">Williams et al. 2009</a>)</span> as the organizing framework. In that model, a kernel or training step is described by:</p>
+<ul>
+<li><p>Its <em>operational intensity</em> (OI): FLOPs executed per byte moved from the limiting memory tier.</p></li>
+<li><p>The machine’s <em>machine balance</em> (MB): peak FLOPs per byte per second of sustained memory bandwidth for that tier.</p></li>
+</ul>
+<p>Comparing OI to MB tells us whether a workload is <em>compute-bound</em> or <em>memory-bound</em> at a given tier. We then extend the same logic to two-tier memories (SRAM + HBM), disaggregated memory behind an I/O ceiling, and network collectives.</p>
+</section>
+<section id="sec-notation" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="sec-notation"><span class="header-section-number">3</span> Notation (Symbols and Units)</h2>
+<div id="tbl-notation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-notation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;2: Notation used throughout the paper, including compute, memory, I/O, and communication parameters.
+</figcaption>
+<div aria-describedby="tbl-notation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+<th style="text-align: left;">Typical units</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(F\)</span></td>
+<td style="text-align: left;">Floating-point operations executed</td>
+<td style="text-align: left;">FLOP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(M\)</span></td>
+<td style="text-align: left;">Bytes moved from the limiting memory tier</td>
+<td style="text-align: left;">Byte</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\mathrm{OI}\)</span></td>
+<td style="text-align: left;">Operational intensity <span class="math inline">\(=F/M\)</span></td>
+<td style="text-align: left;">FLOP/Byte</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(C\)</span></td>
+<td style="text-align: left;">Peak compute throughput (device ceiling)</td>
+<td style="text-align: left;">FLOP/s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(B\)</span></td>
+<td style="text-align: left;">Sustained bandwidth for the limiting tier</td>
+<td style="text-align: left;">Byte/s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\mathrm{MB}\)</span></td>
+<td style="text-align: left;">Machine balance <span class="math inline">\(=C/B\)</span></td>
+<td style="text-align: left;">FLOP/Byte</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(T\)</span></td>
+<td style="text-align: left;">Achievable throughput (roofline-bound)</td>
+<td style="text-align: left;">FLOP/s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(U\)</span></td>
+<td style="text-align: left;">Compute utilization <span class="math inline">\(=T/C\)</span></td>
+<td style="text-align: left;">Dimensionless</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(s\)</span></td>
+<td style="text-align: left;">Bytes per element (e.g., FP16/BF16 <span class="math inline">\(\Rightarrow s=2\)</span>)</td>
+<td style="text-align: left;">Byte/element</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(B_{\mathrm{SRAM}}\)</span></td>
+<td style="text-align: left;">Bandwidth of SRAM tier</td>
+<td style="text-align: left;">Byte/s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(B_{\mathrm{HBM}}\)</span></td>
+<td style="text-align: left;">Bandwidth of HBM tier</td>
+<td style="text-align: left;">Byte/s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(h\)</span></td>
+<td style="text-align: left;">Hit rate in fast tier (SRAM)</td>
+<td style="text-align: left;">Dimensionless</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(B_{\mathrm{IO}}\)</span></td>
+<td style="text-align: left;">Off-package I/O bandwidth ceiling</td>
+<td style="text-align: left;">Byte/s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(B_{\mathrm{net}}\)</span></td>
+<td style="text-align: left;">Network bandwidth for collectives</td>
+<td style="text-align: left;">Byte/s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(N\)</span></td>
+<td style="text-align: left;">Number of devices/ranks</td>
+<td style="text-align: left;">Dimensionless</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(S\)</span></td>
+<td style="text-align: left;">Model state communicated (e.g., gradients)</td>
+<td style="text-align: left;">Byte</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\alpha\)</span></td>
+<td style="text-align: left;">Collective latency term (startup / RTT dominated)</td>
+<td style="text-align: left;">s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\beta\)</span></td>
+<td style="text-align: left;">Inverse bandwidth term (<span class="math inline">\(\beta\approx1/B_{\mathrm{net}}\)</span>)</td>
+<td style="text-align: left;">s/Byte</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(T_{\mathrm{comp}}\)</span></td>
+<td style="text-align: left;">Compute time per step</td>
+<td style="text-align: left;">s</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(T_{\mathrm{comm}}\)</span></td>
+<td style="text-align: left;">Communication time per step</td>
+<td style="text-align: left;">s</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\mathrm{CI}\)</span></td>
+<td style="text-align: left;">Communication intensity (Bytes/FLOP)</td>
+<td style="text-align: left;">Byte/FLOP</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section id="sec-roofline" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="sec-roofline"><span class="header-section-number">4</span> The Roofline Model</h2>
+<section id="what-is-the-roofline-model" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="what-is-the-roofline-model"><span class="header-section-number">4.1</span> What is the roofline model?</h3>
+<p>The <strong>roofline model</strong> <span class="citation" data-cites="williams2009">(<a href="#ref-williams2009" role="doc-biblioref">Williams et al. 2009</a>)</span> is a simple performance model that upper-bounds the attainable throughput of a kernel or workload based on:</p>
+<ul>
+<li><p>The peak compute rate <span class="math inline">\(C\)</span> of the device (FLOP/s), and</p></li>
+<li><p>The sustained memory bandwidth <span class="math inline">\(B\)</span> of the limiting tier (Byte/s).</p></li>
+</ul>
+<p>On a standard roofline plot:</p>
+<ul>
+<li><p>The horizontal axis is the <em>operational intensity</em> OI (FLOP/Byte).</p></li>
+<li><p>The vertical axis is the attained performance <span class="math inline">\(T\)</span> (FLOP/s).</p></li>
+</ul>
+<p>There are two ceilings:</p>
+<ol type="1">
+<li><p>A flat <em>compute roof</em> at <span class="math inline">\(T=C\)</span> (limited by arithmetic throughput).</p></li>
+<li><p>A sloped <em>memory roof</em> at <span class="math inline">\(T=\mathrm{OI}\cdot B\)</span> (limited by bandwidth).</p></li>
+</ol>
+<p>The achievable performance is the minimum of these two: <span id="eq-roofline"><span class="math display">\[
+T(\mathrm{OI})=\min\{C,\ \mathrm{OI}\cdot B\}.
+\tag{1}\]</span></span> <a href="#fig-roofline" class="quarto-xref">Figure&nbsp;2</a> illustrates the roofline and ridge line concepts and outlines memory-bound and compute-bound regions.</p>
+<div id="fig-roofline" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Roofline chart with a rising memory-bound region, a flat compute-bound region, and a marked ridge point">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-roofline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/roofline.svg" class="img-fluid figure-img" alt="Roofline chart with a rising memory-bound region, a flat compute-bound region, and a marked ridge point">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-roofline-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Roofline model: memory-bound region (blue) and compute-bound region (orange) relative to the ridge point <span class="math inline">\(\mathrm{OI}=\mathrm{MB}=C/B\)</span>.
+</figcaption>
+</figure>
+</div>
+</section>
+<section id="operational-intensity-oi" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="operational-intensity-oi"><span class="header-section-number">4.2</span> Operational intensity (OI)</h3>
+<p>Following Williams et al. <span class="citation" data-cites="williams2009">(<a href="#ref-williams2009" role="doc-biblioref">Williams et al. 2009</a>)</span>, the <strong>operational intensity</strong> of a kernel or training step with respect to a given memory tier is: <span id="eq-oi"><span class="math display">\[
+\mathrm{OI}\triangleq \frac{F}{M}\qquad[\text{FLOP/Byte}],
+\tag{2}\]</span></span> where <span class="math inline">\(F\)</span> is the number of FLOPs executed and <span class="math inline">\(M\)</span> is the number of bytes moved from the tier of interest (e.g., HBM).</p>
+<p>Intuitively, OI measures how much arithmetic work you get per byte loaded from that tier. Higher OI means better reuse and less bandwidth pressure for a fixed amount of compute.</p>
+</section>
+<section id="machine-balance-mb" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="machine-balance-mb"><span class="header-section-number">4.3</span> Machine balance (MB)</h3>
+<p>The <strong>machine balance</strong> for a given memory tier is: <span id="eq-mb"><span class="math display">\[
+\mathrm{MB}\triangleq \frac{C}{B}\qquad[\text{FLOP/Byte}],
+\tag{3}\]</span></span> where <span class="math inline">\(C\)</span> is peak compute throughput and <span class="math inline">\(B\)</span> is sustained bandwidth for that tier.</p>
+<p>In roofline terminology <span class="citation" data-cites="williams2009 hennessy2019">(<a href="#ref-williams2009" role="doc-biblioref">Williams et al. 2009</a>; <a href="#ref-hennessy2019" role="doc-biblioref">Hennessy and Patterson 2019</a>)</span>, MB is the “ridge point”: it is the operational intensity at which the bandwidth roof and compute roof intersect.</p>
+<ul>
+<li><p>If <span class="math inline">\(\mathrm{OI}&lt;\mathrm{MB}\)</span>, the workload is <em>memory-bound</em>: its throughput is limited by <span class="math inline">\(B\)</span>, not by <span class="math inline">\(C\)</span>.</p></li>
+<li><p>If <span class="math inline">\(\mathrm{OI}\geq\mathrm{MB}\)</span>, the workload can be compute-bound, assuming no other ceiling (e.g., I/O or network) intervenes.</p></li>
+</ul>
+</section>
+<section id="utilization-under-the-roofline" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="utilization-under-the-roofline"><span class="header-section-number">4.4</span> Utilization under the roofline</h3>
+<p>Compute utilization is the fraction of peak FLOPs actually delivered: <span id="eq-utilization"><span class="math display">\[
+U\triangleq\frac{T}{C}=\min\left\{1,\frac{\mathrm{OI}\cdot B}{C}\right\}.
+\tag{4}\]</span></span> Equivalently, if <span class="math inline">\(\mathrm{OI}&lt;\mathrm{MB}\)</span>, then <span class="math inline">\(\mathrm{OI}\cdot B/C=\mathrm{OI}/\mathrm{MB}&lt;1\)</span> and utilization is proportional to OI.</p>
+</section>
+<section id="bandwidth-required-to-become-compute-bound" class="level3" data-number="4.5">
+<h3 data-number="4.5" class="anchored" data-anchor-id="bandwidth-required-to-become-compute-bound"><span class="header-section-number">4.5</span> Bandwidth required to become compute-bound</h3>
+<p>Rearranging the condition for compute-bound behavior, <span class="math display">\[\mathrm{OI}\cdot B\geq C\]</span> gives the required bandwidth to saturate compute at a given OI: <span id="eq-required-bw"><span class="math display">\[
+B_{\mathrm{req}}=\frac{C}{\mathrm{OI}}.
+\tag{5}\]</span></span> This expression is useful for quickly answering questions of the form: <em>“If my training block has <span class="math inline">\(\mathrm{OI}\approx50\)</span> FLOP/Byte and my device is 1 PFLOP/s, how much memory bandwidth do I actually need for compute-bound training?”</em></p>
+</section>
+</section>
+<section id="sec-kernels" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="sec-kernels"><span class="header-section-number">5</span> Example Kernels: GEMM and Transformer Blocks</h2>
+<section id="gemm-general-matrix-multiplications" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="gemm-general-matrix-multiplications"><span class="header-section-number">5.1</span> GEMM (general matrix multiplications)</h3>
+<p>For a dense GEMM of shape <span class="math inline">\((M\times K)\cdot(K\times N)\)</span>, the FLOPs are: <span id="eq-gemm-flops"><span class="math display">\[
+F_{\mathrm{GEMM}}=2MKN.
+\tag{6}\]</span></span> A common, simple traffic model (reading each input once and writing the output once) is: <span id="eq-gemm-traffic"><span class="math display">\[
+M_{\mathrm{bytes}}\approx(MK+KN+MN)\cdot s,
+\tag{7}\]</span></span> where <span class="math inline">\(s\)</span> is bytes per element (e.g., <span class="math inline">\(s=2\)</span> for FP16/BF16). Then: <span id="eq-gemm-oi"><span class="math display">\[
+\mathrm{OI}_{\mathrm{GEMM}}\approx\frac{2MKN}{(MK+KN+MN)\cdot s}.
+\tag{8}\]</span></span> For large matrices with reasonable blocking, GEMM can reach high OI and often sits in a compute-bound regime on modern accelerators.</p>
+</section>
+<section id="transformer-block-back-of-the-envelope" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="transformer-block-back-of-the-envelope"><span class="header-section-number">5.2</span> Transformer block (back-of-the-envelope)</h3>
+<p>A common rough approximation of FLOPs per token per layer for a transformer block (in terms of hidden size <span class="math inline">\(d\)</span> and sequence length <span class="math inline">\(n\)</span>) is: <span id="eq-transformer-flops"><span class="math display">\[
+F_{\mathrm{tok}}\approx12d^2+4dn,
+\tag{9}\]</span></span> which follows the standard FLOP accounting for the feed-forward network (FFN) and attention (e.g., De Vries <span class="citation" data-cites="devries2024">(<a href="#ref-devries2024" role="doc-biblioref">Vries 2024</a>)</span>, the JAX transformer notes <span class="citation" data-cites="jax2025">(<a href="#ref-jax2025" role="doc-biblioref">JAX/Google 2025</a>)</span>, and Timbers <span class="citation" data-cites="timbers2024">(<a href="#ref-timbers2024" role="doc-biblioref">Timbers 2024</a>)</span>).</p>
+<p>A crude traffic proxy (ignoring caches and fusions) is: <span id="eq-transformer-traffic"><span class="math display">\[
+M_{\mathrm{tok}}\approx6d+2n\qquad[\text{Bytes, up to a constant factor}],
+\tag{10}\]</span></span> consistent with the per-token KV/cache and activation byte counts in Kipply <span class="citation" data-cites="kipply2022">(<a href="#ref-kipply2022" role="doc-biblioref">Kipply 2022</a>)</span> and related analyses. Then: <span id="eq-transformer-oi"><span class="math display">\[
+\mathrm{OI}_{\mathrm{tok}}\approx\frac{F_{\mathrm{tok}}}{M_{\mathrm{tok}}}.
+\tag{11}\]</span></span> In practice, real Transformer training and inference steps mix high-OI matmuls with lower-OI components such as softmax, layer normalization, and elementwise operations. Empirical profiling therefore finds that the effective step-level arithmetic intensity for modern LLMs is typically in the “tens of FLOPs per byte” regime, e.g., on the order of 30–80 FLOP/Byte <span class="citation" data-cites="baseten2025 kim2023 gholami2024 objectivemind2025">(<a href="#ref-baseten2025" role="doc-biblioref">Baseten 2025</a>; <a href="#ref-kim2023" role="doc-biblioref"><span class="nocase">Kim et al.</span> 2023</a>; <a href="#ref-gholami2024" role="doc-biblioref"><span class="nocase">Gholami et al.</span> 2024</a>; <a href="#ref-objectivemind2025" role="doc-biblioref">ObjectiveMind.AI 2025</a>)</span>.</p>
+</section>
+</section>
+<section id="sec-two-tier" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="sec-two-tier"><span class="header-section-number">6</span> Two-Tier Memory: SRAM + HBM</h2>
+<p>Modern accelerators increasingly add a fast on-die or stacked SRAM tier in front of HBM. Let:</p>
+<ul>
+<li><p><span class="math inline">\(B_{\mathrm{SRAM}}\)</span> be the bandwidth of the SRAM tier,</p></li>
+<li><p><span class="math inline">\(B_{\mathrm{HBM}}\)</span> be the bandwidth of the HBM tier,</p></li>
+<li><p><span class="math inline">\(h\)</span> be the fraction of traffic (bytes) served by SRAM (the SRAM “hit rate”).</p></li>
+</ul>
+<p>A first-order, effective bandwidth model is: <span id="eq-effective-bw"><span class="math display">\[
+B_{\mathrm{eff}}\approx h\cdot B_{\mathrm{SRAM}}+(1-h)\cdot B_{\mathrm{HBM}}.
+\tag{12}\]</span></span> Higher <span class="math inline">\(h\)</span> moves the workload closer to a compute-bound regime by increasing <span class="math inline">\(B_{\mathrm{eff}}\)</span>, and thus raising the effective machine balance: <span id="eq-effective-mb"><span class="math display">\[
+\mathrm{MB}_{\mathrm{eff}}\approx\frac{C}{B_{\mathrm{eff}}}.
+\tag{13}\]</span></span></p>
+<section id="sec-sram-worked" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="sec-sram-worked"><span class="header-section-number">6.1</span> Worked example with an SRAM tier (GB200-class device)</h3>
+<p>Consider a Blackwell-class (GB200) accelerator with:</p>
+<ul>
+<li><p>Peak compute: <span class="math inline">\(C\approx4.5\times10^{15}\)</span> FLOP/s (4.5 PFLOP/s FP16/BF16).</p></li>
+<li><p>HBM bandwidth: <span class="math inline">\(B_{\mathrm{HBM}}=8\)</span> TB/s.</p></li>
+<li><p>Hypothetical SRAM bandwidth: <span class="math inline">\(B_{\mathrm{SRAM}}=32\)</span> TB/s.</p></li>
+</ul>
+<p>We examine a transformer block whose effective operational intensity is <span class="math display">\[\mathrm{OI}\approx50\ \text{FLOP/Byte}.\]</span></p>
+<section id="step-1-single-tier-hbm-no-sram." class="level4" data-number="6.1.1">
+<h4 data-number="6.1.1" class="anchored" data-anchor-id="step-1-single-tier-hbm-no-sram."><span class="header-section-number">6.1.1</span> Step 1: Single-tier HBM (no SRAM).</h4>
+<p>The machine balance for the HBM tier is: <span class="math display">\[\mathrm{MB}_{\mathrm{HBM}}=\frac{C}{B_{\mathrm{HBM}}}=\frac{4.5\times10^{15}}{8\times10^{12}}\approx560\ \text{FLOP/Byte}.\]</span> Since <span class="math inline">\(\mathrm{OI}=50\ll560\)</span>, the workload is strongly memory-bound. The maximum attainable throughput from HBM is: <span class="math display">\[T_{\mathrm{HBM}}=\mathrm{OI}\cdot B_{\mathrm{HBM}}=50\times8\times10^{12}\ \text{FLOP/s}=4\times10^{14}\ \text{FLOP/s},\]</span> which is only about 9% of the 4.5 PFLOP/s compute peak.</p>
+</section>
+<section id="step-2-add-an-sram-tier-with-hit-rate-h0.75." class="level4" data-number="6.1.2">
+<h4 data-number="6.1.2" class="anchored" data-anchor-id="step-2-add-an-sram-tier-with-hit-rate-h0.75."><span class="header-section-number">6.1.2</span> Step 2: Add an SRAM tier with hit rate <span class="math inline">\(h=0.75\)</span>.</h4>
+<p>Assume that with an SRAM tier we can serve 75% of the bytes from SRAM: <span class="math display">\[h=0.75.\]</span> Then the effective bandwidth is: <span class="math display">\[
+\begin{aligned}
+B_{\mathrm{eff}}&amp;\approx hB_{\mathrm{SRAM}}+(1-h)B_{\mathrm{HBM}}\\
+        &amp;=0.75\times32\ \text{TB/s}+0.25\times8\ \text{TB/s}\\
+        &amp;=24\ \text{TB/s}+2\ \text{TB/s}\\
+        &amp;=26\ \text{TB/s}.
+\end{aligned}
+\]</span> The new machine balance is: <span class="math display">\[\mathrm{MB}_{\mathrm{eff}}=\frac{C}{B_{\mathrm{eff}}}=\frac{4.5\times10^{15}}{26\times10^{12}}\approx1.7\times10^2\ \text{FLOP/Byte}.\]</span> We still have <span class="math inline">\(\mathrm{OI}=50&lt;170\)</span>, so the workload is still memory-bound, but less severely. The attainable throughput becomes: <span class="math display">\[T_{\mathrm{eff}}=\mathrm{OI}\cdot B_{\mathrm{eff}}=50\times26\times10^{12}\ \text{FLOP/s}=1.3\times10^{15}\ \text{FLOP/s},\]</span> which is about 29% of peak instead of 9%.</p>
+</section>
+<section id="step-3-can-we-ever-make-this-workload-compute-bound-with-these-tiers" class="level4" data-number="6.1.3">
+<h4 data-number="6.1.3" class="anchored" data-anchor-id="step-3-can-we-ever-make-this-workload-compute-bound-with-these-tiers"><span class="header-section-number">6.1.3</span> Step 3: Can we ever make this workload compute-bound with these tiers?</h4>
+<p>To be compute-bound at <span class="math inline">\(\mathrm{OI}=50\)</span>, we would need: <span class="math display">\[B_{\mathrm{req}}=\frac{C}{\mathrm{OI}}=\frac{4.5\times10^{15}}{50}=9\times10^{13}\ \text{Byte/s}=90\ \text{TB/s}.\]</span> Even if <span class="math inline">\(h=1\)</span> (all traffic served from SRAM), the maximum effective bandwidth is: <span class="math display">\[B_{\mathrm{eff,max}}=B_{\mathrm{SRAM}}=32\ \text{TB/s}&lt;B_{\mathrm{req}}.\]</span> Therefore, no choice of <span class="math inline">\(h\)</span> can make this particular workload compute-bound on this device, given <span class="math inline">\(B_{\mathrm{SRAM}}=32\)</span> TB/s and <span class="math inline">\(B_{\mathrm{HBM}}=8\)</span> TB/s. The SRAM tier substantially improves utilization (from <span class="math inline">\(\sim9\%\)</span> to <span class="math inline">\(\sim29\%\)</span>), but the step remains memory-limited.</p>
+</section>
+</section>
+</section>
+<section id="sec-disaggregated" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="sec-disaggregated"><span class="header-section-number">7</span> Disaggregated Memory and the I/O Ceiling</h2>
+<p><a href="#fig-tiered-memory" class="quarto-xref">Figure&nbsp;3</a> illustrates the resulting tiered memory hierarchy: fast on-device SRAM and HBM tiers feed into an off-device, disaggregated memory pool over a bandwidth-limited I/O or fabric link.</p>
+<p>Now consider disaggregated memory that lives off-package (e.g., across a memory fabric) and is fed into the accelerator over a finite I/O interface with bandwidth <span class="math inline">\(B_{\mathrm{IO}}\)</span>. Even if the remote memory pool itself is very fast, the delivered bandwidth into the device cannot exceed: <span id="eq-delivered-bw"><span class="math display">\[
+B_{\mathrm{delivered}}\leq\min\{B_{\mathrm{remote\ mem}},\ B_{\mathrm{IO}}\}.
+\tag{14}\]</span></span> In roofline terms, the relevant machine balance becomes: <span class="math display">\[\mathrm{MB}_{\mathrm{disagg}}=\frac{C}{B_{\mathrm{delivered}}}.\]</span></p>
+<div id="fig-tiered-memory" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Tiered memory hierarchy connecting compute cores to SRAM, HBM, a fabric link, and a disaggregated memory pool">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-tiered-memory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="assets/tiered-memory.svg" class="img-fluid figure-img" alt="Tiered memory hierarchy connecting compute cores to SRAM, HBM, a fabric link, and a disaggregated memory pool">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tiered-memory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Tiered memory hierarchy for an accelerator: fast on-device SRAM and HBM tiers feed into an off-device, disaggregated memory pool over a bandwidth-limited I/O or fabric link.
+</figcaption>
+</figure>
+</div>
+<section id="practical-limits-why-disaggregated-memory-is-insufficient-to-achieve-compute-bound-transformer-training-under-current-io-ceilings" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="practical-limits-why-disaggregated-memory-is-insufficient-to-achieve-compute-bound-transformer-training-under-current-io-ceilings"><span class="header-section-number">7.1</span> Practical Limits: Why Disaggregated Memory Is Insufficient to Achieve Compute-Bound Transformer Training Under Current I/O Ceilings</h3>
+<p>The analysis above shows how local memory bandwidth determines whether a kernel or training step lies on the sloped (bandwidth-bound) or flat (compute-bound) portion of the roofline. We now examine whether disaggregated memory can realistically raise the effective bandwidth <span class="math inline">\(B_{\mathrm{delivered}}\)</span> enough to move a transformer workload into the compute-bound regime.</p>
+<p>Recall that the condition for compute-bound execution is <span class="math display">\[B_{\mathrm{delivered}}\geq B_{\mathrm{req}}=\frac{C}{\mathrm{OI}},\]</span> where typical operational intensities for modern models lie in the range <span class="math inline">\(\mathrm{OI}\approx30\)</span>–<span class="math inline">\(80\)</span> FLOP/Byte. For accelerators with <span class="math inline">\(C=1\)</span>–<span class="math inline">\(10\)</span> PFLOP/s, the required bandwidth is therefore <span class="math display">\[B_{\mathrm{req}}\approx12.5\text{--}333\ \text{TB/s},\]</span> depending on workload structure and model architecture.</p>
+<section id="published-io-bandwidths-fall-far-below-this-threshold." class="level4" data-number="7.1.1">
+<h4 data-number="7.1.1" class="anchored" data-anchor-id="published-io-bandwidths-fall-far-below-this-threshold."><span class="header-section-number">7.1.1</span> Published I/O bandwidths fall far below this threshold.</h4>
+<p>Concrete, vendor-published figures for existing disaggregated-memory fabrics include:</p>
+<ul>
+<li><p><strong>CXL 2.0/3.0:</strong> 64–128 GB/s per direction (<span class="math inline">\(\ll1\)</span> TB/s),</p></li>
+<li><p><strong>PCIe Gen5/6:</strong> 64–128 GB/s per direction,</p></li>
+<li><p><strong>NVLink (Hopper/Blackwell):</strong> 0.9–2.4 TB/s aggregate,</p></li>
+<li><p><strong>Celestial Photonic Fabric:</strong> <span class="math inline">\(\sim7.2\)</span> Tbps <span class="math inline">\(\approx0.9\)</span> TB/s,</p></li>
+<li><p><strong>Lightmatter Passage Photonic Interconnect:</strong> 114 Tbps <span class="math inline">\(\approx14.25\)</span> TB/s (the highest published value to date).<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p></li>
+</ul>
+<p>Even under the most generous interpretation of these data, the maximum achievable delivered bandwidth into an accelerator via a disaggregated memory fabric is <span class="math display">\[B_{\mathrm{delivered,max}}\approx14\ \text{TB/s}.\]</span></p>
+<p>Because this figure rests on a single vendor’s published number, it is worth checking how much the conclusion depends on it. Discounting it by a factor of <span class="math inline">\(2\)</span>–<span class="math inline">\(3\times\)</span>, to account for the gap between a vendor specification and sustained, real-world delivered bandwidth, gives <span class="math inline">\(B_{\mathrm{delivered,max}}\approx5\)</span>–<span class="math inline">\(7\)</span> TB/s. Recomputing the ratios below with 7 TB/s in place of 14 TB/s roughly doubles each factor (e.g., the <span class="math inline">\(1.4\times\)</span> case becomes <span class="math inline">\(\approx2.9\times\)</span>, and the <span class="math inline">\(9\)</span>–<span class="math inline">\(25\times\)</span> case becomes <span class="math inline">\(\approx18\)</span>–<span class="math inline">\(48\times\)</span>): the gap only widens under a more conservative reading of the vendor figure, so the conclusion is not sensitive to taking this number at face value.</p>
+<p>This analysis treats the disaggregated interface as the limiting memory feed; that is, we evaluate the extreme regime in which remote memory would need to supply the full bandwidth required to reach the compute roofline.</p>
+<p><strong>Key Result:</strong> Even the highest published disaggregated-memory fabrics offer delivered bandwidth <span class="math inline">\(B_{\mathrm{delivered}}\)</span> one to two orders of magnitude below the <span class="math inline">\(B_{\mathrm{req}}=C/\mathrm{OI}\)</span> that would be required if remote memory were the limiting tier, and therefore are insufficient to make transformer workloads compute-bound via bandwidth supplied across the disaggregated I/O interface. <span class="math display">\[\text{factor of }\frac{B_{\mathrm{req}}}{B_{\mathrm{delivered,max}}}\approx
+\begin{cases}
+2.3\times &amp; (\mathrm{OI}=30,\ C=1\ \text{PFLOP/s}),\\
+1.4\times &amp; (\mathrm{OI}=50,\ C=1\ \text{PFLOP/s}),\\
+9\text{--}25\times &amp; (C=10\ \text{PFLOP/s},\ \mathrm{OI}=80\text{--}30).
+\end{cases}\]</span></p>
+</section>
+</section>
+<section id="a-more-realistic-deployment-disaggregated-memory-as-an-overflow-tier" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="a-more-realistic-deployment-disaggregated-memory-as-an-overflow-tier"><span class="header-section-number">7.2</span> A More Realistic Deployment: Disaggregated Memory as an Overflow Tier</h3>
+<p>Section 7.1 evaluates the extreme case in which disaggregated memory would need to supply the entire byte stream for a step to reach the compute roofline. In practice, no serious deployment uses disaggregated memory this way: it sits behind SRAM and HBM as a capacity overflow tier for cold or infrequently accessed bytes, such as optimizer state and checkpoint data offloaded to slower tiers <span class="citation" data-cites="rajbhandari2021">(<a href="#ref-rajbhandari2021" role="doc-biblioref">Rajbhandari et al. 2021</a>)</span>, KV-cache pages evicted from HBM to CXL-attached memory <span class="citation" data-cites="tang2024">(<a href="#ref-tang2024" role="doc-biblioref"><span class="nocase">Tang et al.</span> 2024</a>)</span>, or stranded host/pooled memory reclaimed for capacity rather than bandwidth <span class="citation" data-cites="li2023">(<a href="#ref-li2023" role="doc-biblioref">Li et al. 2023</a>)</span>. This is the same tiered role SRAM plays in front of HBM in <a href="#sec-two-tier" class="quarto-xref">Section&nbsp;6</a>. We can extend the blended-bandwidth model of <a href="#eq-effective-bw" class="quarto-xref">Equation&nbsp;12</a> to three tiers: <span class="math display">\[B_{\mathrm{eff}}\approx h_{\mathrm{SRAM}}B_{\mathrm{SRAM}}+h_{\mathrm{HBM}}B_{\mathrm{HBM}}+h_{\mathrm{remote}}B_{\mathrm{delivered}},
+  \qquad h_{\mathrm{SRAM}}+h_{\mathrm{HBM}}+h_{\mathrm{remote}}=1.\]</span></p>
+<p>Returning to the GB200-class worked example of <a href="#sec-sram-worked" class="quarto-xref">Section&nbsp;6.1</a> (<span class="math inline">\(h_{\mathrm{SRAM}}=0.75\)</span>), suppose a modest <span class="math inline">\(h_{\mathrm{remote}}=0.08\)</span> of bytes, consisting of cold or infrequently touched state rather than the hot working set, are served from a disaggregated pool at the most generous published delivered bandwidth from Section 7.1, <span class="math inline">\(B_{\mathrm{delivered}}\approx14\)</span> TB/s, instead of from local HBM (<span class="math inline">\(B_{\mathrm{HBM}}=8\)</span> TB/s): <span class="math display">\[B_{\mathrm{eff}}\approx0.75(32)+0.17(8)+0.08(14)=24+1.36+1.12=26.48\ \text{TB/s},\]</span> versus 26 TB/s without the disaggregated tier. Utilization rises marginally, from 29% to about 29.4%. This confirms rather than overturns the paper’s central claim: at the per-step bandwidth level, disaggregated memory used as an overflow tier buys a small, real, but not transformative improvement, nowhere near enough to approach the ridge point. The gain is modest precisely because disaggregated bandwidth, even in its most generous published form, is closer to on-package HBM speed than to SRAM speed, while serving a much smaller fraction of traffic.</p>
+<p>This does not mean the added capacity itself is unimportant; its value simply does not show up in <span class="math inline">\(B_{\mathrm{eff}}\)</span>. Two effects sit outside this bandwidth accounting entirely. First, additional capacity is often what allows a larger batch or longer context to be run at all, and OI itself typically increases with the batch dimension: from <a href="#eq-gemm-oi" class="quarto-xref">Equation&nbsp;8</a>, <span class="math inline">\(\mathrm{OI}_{\mathrm{GEMM}}\)</span> improves as matrices are made larger and weights are reused across more rows, so a workload that could only run at a smaller batch without extra capacity may sit at a systematically higher OI once disaggregated memory makes a larger batch feasible. This is a second-order effect the bandwidth-only model above does not capture. Second, capacity determines whether a step runs at all versus fails with an out-of-memory error, or forces additional model or pipeline parallelism purely to fit state that has nothing to do with compute throughput. Neither effect is quantified by the roofline framework used in this note, and both are exactly the kind of capacity-driven, system-level benefit flagged as out of scope in <a href="#sec-introduction" class="quarto-xref">Section&nbsp;1</a>; we surface them here only to make clear that the small <span class="math inline">\(B_{\mathrm{eff}}\)</span> gain above is a different question from whether disaggregated capacity is useful.</p>
+</section>
+<section id="is-the-gap-closing-a-generational-trend-view-of-fabric-bandwidth" class="level3" data-number="7.3">
+<h3 data-number="7.3" class="anchored" data-anchor-id="is-the-gap-closing-a-generational-trend-view-of-fabric-bandwidth"><span class="header-section-number">7.3</span> Is the Gap Closing? A Generational Trend View of Fabric Bandwidth</h3>
+<p><a href="#sec-introduction" class="quarto-xref">Section&nbsp;1</a> shows that compute has grown faster than on-package HBM bandwidth across four GPU generations (<a href="#tbl-gpu-growth" class="quarto-xref">Table&nbsp;1</a>). The same question is fair to ask of off-package fabric bandwidth: is the one-to-two-orders-of-magnitude gap identified above closing over time, or widening? <a href="#tbl-fabric-growth" class="quarto-xref">Table&nbsp;3</a> tracks two representative interconnects across a comparable generational span. Per-GPU NVLink bandwidth has grown from 300 GB/s (Volta) to 1.8 TB/s (Blackwell), a <span class="math inline">\(6\times\)</span> increase over the same four generations as <a href="#tbl-gpu-growth" class="quarto-xref">Table&nbsp;1</a>, while PCIe per-lane (x16) bandwidth has roughly doubled each generation, from <span class="math inline">\(\sim16\)</span> GB/s (Gen3) to <span class="math inline">\(\sim128\)</span> GB/s (Gen6), an <span class="math inline">\(8\times\)</span> increase spread over a longer, roughly 12–15 year span.</p>
+<div id="tbl-fabric-growth" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-fabric-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;3: Generational growth of representative interconnect bandwidths versus peak compute. NVLink and compute are compared over the same four GPU generations; PCIe is compared over a longer, comparable span since it advances on its own release cadence.
+</figcaption>
+<div aria-describedby="tbl-fabric-growth-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Interconnect</th>
+<th style="text-align: left;">Earliest generation</th>
+<th style="text-align: left;">Latest generation</th>
+<th style="text-align: right;">Growth</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">NVLink (per GPU)</td>
+<td style="text-align: left;">300 GB/s (Volta)</td>
+<td style="text-align: left;">1.8 TB/s (Blackwell)</td>
+<td style="text-align: right;"><span class="math inline">\(6\times\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PCIe (x16, one direction)</td>
+<td style="text-align: left;"><span class="math inline">\(\sim16\)</span> GB/s (Gen3)</td>
+<td style="text-align: left;"><span class="math inline">\(\sim128\)</span> GB/s (Gen6)</td>
+<td style="text-align: right;"><span class="math inline">\(8\times\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Peak compute (<a href="#tbl-gpu-growth" class="quarto-xref">Table&nbsp;1</a>)</td>
+<td style="text-align: left;">0.125 PFLOP/s (Volta)</td>
+<td style="text-align: left;">4.5 PFLOP/s (Blackwell)</td>
+<td style="text-align: right;"><span class="math inline">\(36\times\)</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+<p>Both interconnects grow several times slower than compute over the same span: NVLink by roughly <span class="math inline">\(6\times\)</span> against a <span class="math inline">\(36\times\)</span> compute increase, and PCIe/CXL-class fabrics, which set the low end of the disaggregated-bandwidth figures in Section 7.1, by a comparable or smaller multiple over an even longer window. Extrapolating these historical growth rates, the bandwidth gap identified in this section should be expected to persist or widen over the next several device generations, rather than close. This mirrors the conclusion <a href="#sec-introduction" class="quarto-xref">Section&nbsp;1</a> reaches for on-package HBM, now demonstrated for off-package fabric bandwidth rather than assumed.</p>
+</section>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-baseten2025" class="csl-entry" role="listitem">
+Baseten. 2025. <span>“A Guide to LLM Inference and Performance.”</span>
+</div>
+<div id="ref-gholami2024" class="csl-entry" role="listitem">
+<span class="nocase">Gholami, Amir et al.</span> 2024. <span>“AI and Memory Wall.”</span> <em>IEEE Micro</em>.
+</div>
+<div id="ref-hennessy2019" class="csl-entry" role="listitem">
+Hennessy, John L., and David A. Patterson. 2019. <em>Computer Architecture: A Quantitative Approach</em>. 6th ed. Morgan Kaufmann.
+</div>
+<div id="ref-jax2025" class="csl-entry" role="listitem">
+JAX/Google. 2025. <span>“All the Transformer Math You Need to Know.”</span>
+</div>
+<div id="ref-kim2023" class="csl-entry" role="listitem">
+<span class="nocase">Kim, Sehoon et al.</span> 2023. <span>“Full Stack Optimization of Transformer Inference: A Survey.”</span> <em>arXiv Preprint arXiv:2302.14017</em>.
+</div>
+<div id="ref-kipply2022" class="csl-entry" role="listitem">
+Kipply. 2022. <span>“Transformer Inference Arithmetic.”</span>
+</div>
+<div id="ref-li2023" class="csl-entry" role="listitem">
+Li, Huaicheng, Daniel S. Berger, Lisa Hsu, et al. 2023. <span>“Pond: CXL-Based Memory Pooling Systems for Cloud Platforms.”</span> <em>Proceedings of the 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems (ASPLOS ’23)</em>.
+</div>
+<div id="ref-objectivemind2025" class="csl-entry" role="listitem">
+ObjectiveMind.AI. 2025. <span>“Memory Bandwidth Engineering: The True Bottleneck in LLM GPU Architecture.”</span>
+</div>
+<div id="ref-rajbhandari2021" class="csl-entry" role="listitem">
+Rajbhandari, Samyam, Olatunji Ruwase, Jeff Rasley, Sam Smith, and Yuxiong He. 2021. <span>“ZeRO-Infinity: Breaking the GPU Memory Wall for Extreme Scale Deep Learning.”</span> <em>Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis (SC ’21)</em>.
+</div>
+<div id="ref-tang2024" class="csl-entry" role="listitem">
+<span class="nocase">Tang, Y. et al.</span> 2024. <span>“Exploring CXL-Based KV Cache Storage for LLM Serving.”</span> <em>ML for Systems Workshop, NeurIPS</em>.
+</div>
+<div id="ref-timbers2024" class="csl-entry" role="listitem">
+Timbers, Finbarr. 2024. <span>“Where Do LLMs Spend Their FLOPS?”</span>
+</div>
+<div id="ref-devries2024" class="csl-entry" role="listitem">
+Vries, Harm de. 2024. <span>“In the Long (Context) Run.”</span>
+</div>
+<div id="ref-williams2009" class="csl-entry" role="listitem">
+Williams, Samuel, Andrew Waterman, and David Patterson. 2009. <span>“Roofline: An Insightful Visual Performance Model for Floating-Point Programs and Multicore Architectures.”</span> <em>Communications of the ACM</em>.
+</div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>This figure is a vendor-published specification rather than an independently measured, deployed benchmark, and should be read with the same skepticism this note urges toward other vendor claims in <a href="#sec-introduction" class="quarto-xref">Section&nbsp;1</a>. We use it anyway, as the most favorable published data point available, and check below whether the conclusion is sensitive to it.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/infinitelimit\.ai");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      if (authorPrefersDark) {
+          [baseTheme, altTheme] = [altTheme, baseTheme];
+      }
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "btoptical/blog";
+    script.dataset.repoId = "R_kgDOQ0-UbQ";
+    script.dataset.category = "Announcements";
+    script.dataset.categoryId = "DIC_kwDOQ0-Ubc4DDvJl";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2026 Brian Taylor · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

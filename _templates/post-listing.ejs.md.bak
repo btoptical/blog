@@ -2,16 +2,7 @@
 <div class="post-list list">
 <% for (const item of items) { %>
   <article class="post-card" <%= metadataAttrs(item) %>>
-    <div class="post-card__date">
-      <span class="listing-date">Published <%= item.date %></span>
-
-      <% if (item['date-modified'] && item['date-modified'] !== item.date) { %>
-      <span aria-hidden="true"> · </span>
-      <span class="post-card__date--modified listing-date-modified">
-        Updated <%= item['date-modified'] %>
-      </span>
-      <% } %>
-    </div>
+    <time class="post-card__date listing-date"><%= item.date %></time>
 
     <h2 class="post-card__title listing-title">
       <a href="<%- item.path %>"><%- item.title %></a>

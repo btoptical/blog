@@ -29,5 +29,33 @@
   <pubDate>Tue, 06 Jan 2026 08:00:00 GMT</pubDate>
   <media:content url="https://infinitelimit.ai/images/limit.svg" medium="image" type="image/svg+xml"/>
 </item>
+<item>
+  <title>Quantifying the Utility of Disaggregated Memory in AI Systems, Part II</title>
+  <dc:creator>Brian D. Taylor</dc:creator>
+  <link>https://infinitelimit.ai/posts/disaggregated-memory-ai-systems-part-2/</link>
+  <description><![CDATA[ Part II extends the intensity framework to inference and distributed training, then develops design implications and open research questions. ]]></description>
+  <category>AI infrastructure</category>
+  <category>LLM inference</category>
+  <category>distributed training</category>
+  <category>networking</category>
+  <category>performance engineering</category>
+  <guid>https://infinitelimit.ai/posts/disaggregated-memory-ai-systems-part-2/</guid>
+  <pubDate>Wed, 10 Dec 2025 08:00:00 GMT</pubDate>
+  <media:content url="https://infinitelimit.ai/posts/disaggregated-memory-ai-systems-part-2/assets/roofline.png" medium="image" type="image/png" height="92" width="144"/>
+</item>
+<item>
+  <title>Quantifying the Utility of Disaggregated Memory in AI Systems, Part I</title>
+  <dc:creator>Brian D. Taylor</dc:creator>
+  <link>https://infinitelimit.ai/posts/disaggregated-memory-ai-systems/</link>
+  <description><![CDATA[ Part I develops the roofline model, transformer intensity estimates, two-tier SRAM/HBM analysis, and the I/O ceiling for disaggregated memory. ]]></description>
+  <category>AI infrastructure</category>
+  <category>GPU architecture</category>
+  <category>HBM</category>
+  <category>disaggregated memory</category>
+  <category>performance engineering</category>
+  <guid>https://infinitelimit.ai/posts/disaggregated-memory-ai-systems/</guid>
+  <pubDate>Wed, 10 Dec 2025 08:00:00 GMT</pubDate>
+  <media:content url="https://infinitelimit.ai/posts/disaggregated-memory-ai-systems/assets/gpu-growth.png" medium="image" type="image/png" height="80" width="144"/>
+</item>
 </channel>
 </rss>

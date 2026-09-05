@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Brian D. Taylor">
+<meta name="dcterms.date" content="2025-12-10">
+<meta name="description" content="Part II extends the intensity framework to inference and distributed training, then develops design implications and open research questions.">
+
+<title>Quantifying the Utility of Disaggregated Memory in AI Systems, Part II – Infinite Limit</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/logo-square.svg" rel="icon" type="image/svg+xml">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-64a204ab8560d761af7679ceaba22944.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-e44dc3806cfcfbff4aee98d0a0b47eac.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-2d192ff245f4ef1ba3f04a396f3717b6.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-e44dc3806cfcfbff4aee98d0a0b47eac.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../navbar-light.css">
+<link rel="stylesheet" href="../../print.css">
+<meta property="og:title" content="Quantifying the Utility of Disaggregated Memory in AI Systems, Part II – Infinite Limit">
+<meta property="og:description" content="Part II extends the intensity framework to inference and distributed training, then develops design implications and open research questions.">
+<meta property="og:image" content="https://infinitelimit.ai/posts/disaggregated-memory-ai-systems-part-2/assets/roofline.png">
+<meta property="og:site_name" content="Infinite Limit">
+<meta property="og:image:height" content="891">
+<meta property="og:image:width" content="1400">
+<meta property="og:image:alt" content="Relative growth of GPU compute throughput and HBM bandwidth from Volta through Blackwell">
+<meta name="twitter:title" content="Quantifying the Utility of Disaggregated Memory in AI Systems, Part II – Infinite Limit">
+<meta name="twitter:description" content="Part II extends the intensity framework to inference and distributed training, then develops design implications and open research questions.">
+<meta name="twitter:image" content="https://infinitelimit.ai/posts/disaggregated-memory-ai-systems-part-2/assets/roofline.png">
+<meta name="twitter:image-height" content="891">
+<meta name="twitter:image-width" content="1400">
+<meta name="twitter:image:alt" content="Relative growth of GPU compute throughput and HBM bandwidth from Volta through Blackwell">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../" class="navbar-brand navbar-brand-logo">
+    <img src="../../images/logo-navbar.svg" alt="Infinite Limit" class="navbar-logo light-content">
+    <img src="../../images/logo-navbar.svg" alt="Infinite Limit" class="navbar-logo dark-content">
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../"> 
+<span class="menu-text">Writing</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../contact.html"> 
+<span class="menu-text">Contact</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+    <a href="../../index.xml" title="" class="quarto-navigation-tool px-1" aria-label="RSS feed"><i class="bi bi-rss"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sec-inference" id="toc-sec-inference" class="nav-link active" data-scroll-target="#sec-inference"><span class="header-section-number">8</span> Extending the Framework to Inference</a>
+  <ul class="collapse">
+  <li><a href="#prefill-training-like-decode-nothing-like-it" id="toc-prefill-training-like-decode-nothing-like-it" class="nav-link" data-scroll-target="#prefill-training-like-decode-nothing-like-it"><span class="header-section-number">8.1</span> Prefill: training-like, decode: nothing like it</a></li>
+  <li><a href="#batch-size-1-is-about-as-memory-bound-as-it-gets" id="toc-batch-size-1-is-about-as-memory-bound-as-it-gets" class="nav-link" data-scroll-target="#batch-size-1-is-about-as-memory-bound-as-it-gets"><span class="header-section-number">8.2</span> Batch size 1 is about as memory-bound as it gets</a></li>
+  <li><a href="#how-much-batching-does-it-take-to-look-like-training" id="toc-how-much-batching-does-it-take-to-look-like-training" class="nav-link" data-scroll-target="#how-much-batching-does-it-take-to-look-like-training"><span class="header-section-number">8.3</span> How much batching does it take to look like training?</a></li>
+  <li><a href="#where-disaggregated-memory-actually-fits-capacity-for-the-queue-not-bandwidth-for-the-step" id="toc-where-disaggregated-memory-actually-fits-capacity-for-the-queue-not-bandwidth-for-the-step" class="nav-link" data-scroll-target="#where-disaggregated-memory-actually-fits-capacity-for-the-queue-not-bandwidth-for-the-step"><span class="header-section-number">8.4</span> Where disaggregated memory actually fits: capacity for the queue, not bandwidth for the step</a></li>
+  </ul></li>
+  <li><a href="#sec-distributed" id="toc-sec-distributed" class="nav-link" data-scroll-target="#sec-distributed"><span class="header-section-number">9</span> Distributed Training: Communication Rooflines and Network Ceilings</a>
+  <ul class="collapse">
+  <li><a href="#communication-intensity-the-network-analogue-of-oi" id="toc-communication-intensity-the-network-analogue-of-oi" class="nav-link" data-scroll-target="#communication-intensity-the-network-analogue-of-oi"><span class="header-section-number">9.1</span> Communication intensity: the network analogue of OI</a></li>
+  <li><a href="#collective-communication-and-step-time-ceilings" id="toc-collective-communication-and-step-time-ceilings" class="nav-link" data-scroll-target="#collective-communication-and-step-time-ceilings"><span class="header-section-number">9.2</span> Collective communication and step-time ceilings</a></li>
+  <li><a href="#interaction-with-disaggregated-memory" id="toc-interaction-with-disaggregated-memory" class="nav-link" data-scroll-target="#interaction-with-disaggregated-memory"><span class="header-section-number">9.3</span> Interaction with disaggregated memory</a></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="header-section-number">9.4</span> Summary</a></li>
+  </ul></li>
+  <li><a href="#sec-design" id="toc-sec-design" class="nav-link" data-scroll-target="#sec-design"><span class="header-section-number">10</span> Design Implications</a></li>
+  <li><a href="#sec-future-work" id="toc-sec-future-work" class="nav-link" data-scroll-target="#sec-future-work"><span class="header-section-number">11</span> Future Work and Open Questions</a></li>
+  <li><a href="#sec-conclusion" id="toc-sec-conclusion" class="nav-link" data-scroll-target="#sec-conclusion"><span class="header-section-number">12</span> Conclusion</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Quantifying the Utility of Disaggregated Memory in AI Systems, Part II</h1>
+<p class="subtitle lead">Inference, communication rooflines, design implications, and open questions</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">AI infrastructure</div>
+    <div class="quarto-category">LLM inference</div>
+    <div class="quarto-category">distributed training</div>
+    <div class="quarto-category">networking</div>
+    <div class="quarto-category">performance engineering</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    Part II extends the intensity framework to inference and distributed training, then develops design implications and open research questions.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Brian D. Taylor </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 10, 2025</p>
+    </div>
+  </div>
+  
+    <div>
+    <div class="quarto-title-meta-heading">Modified</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date-modified">September 4, 2026</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled" title="Two-part series">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Two-part series
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This is Part II of the complete paper, continuing with Sections 8–12. <a href="../disaggregated-memory-ai-systems/">Start with Part I</a> for the roofline model, operational intensity, transformer kernels, SRAM/HBM tiers, and the disaggregated-memory I/O ceiling.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Prefer the paper format?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="../../downloads/disaggregated-memory-ai-systems.pdf" target="_blank">Read or download the complete paper (PDF)</a></p>
+</div>
+</div>
+<section id="sec-inference" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="sec-inference"><span class="header-section-number">8</span> Extending the Framework to Inference</h2>
+<p>Everything above is framed in terms of a “training step,” but the same OI-vs.-MB logic applies to inference, with one important twist: inference is not one workload but two, with opposite intensity profiles. Modern serving systems increasingly run them on physically separate hardware pools for exactly this reason <span class="citation" data-cites="zhong2024 patel2024 qin2025">(<a href="#ref-zhong2024" role="doc-biblioref">Zhong et al. 2024</a>; <a href="#ref-patel2024" role="doc-biblioref">Patel et al. 2024</a>; <a href="#ref-qin2025" role="doc-biblioref">Qin et al. 2025</a>)</span>, which makes inference a useful stress test for the framework developed in this note.</p>
+<section id="prefill-training-like-decode-nothing-like-it" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="prefill-training-like-decode-nothing-like-it"><span class="header-section-number">8.1</span> Prefill: training-like, decode: nothing like it</h3>
+<p>Prefill processes an entire prompt in one parallel forward pass, batching all <span class="math inline">\(n\)</span> prompt tokens through the same large GEMMs analyzed in Section 5. Prefill’s operational intensity is governed by the same GEMM logic as <a href="../disaggregated-memory-ai-systems/#eq-gemm-oi">Equation 8 of Part I</a>: with enough prompt tokens to batch, weight loads are amortized across many tokens at once, and prefill sits in the same tens-to-high-OI regime as training. Nothing in <a href="../disaggregated-memory-ai-systems/#sec-two-tier">Section 6 of Part I</a>–<a href="../disaggregated-memory-ai-systems/#sec-disaggregated">Section 7 of Part I</a> needs to change to describe it.</p>
+<p>Decode is different. Each step generates exactly one new token per sequence, autoregressively, so a batch of <span class="math inline">\(B\)</span> sequences processes only <span class="math inline">\(B\)</span> tokens per step, not <span class="math inline">\(B\times n\)</span> as in prefill. Model weights must still be streamed from HBM every step, but with far fewer tokens to amortize that cost over. The traffic proxy <span class="math inline">\(M_{\mathrm{tok}}\)</span> in <a href="../disaggregated-memory-ai-systems/#eq-transformer-traffic">Equation 10 of Part I</a> counts only per-token activation and KV-cache bytes; it does not include weight bytes at all, which is a reasonable simplification for a large, well-batched pass where weight traffic is negligible per token, but is exactly the term that dominates decode at low batch size. Making that term explicit: a transformer layer has on the order of <span class="math inline">\(12d^2\)</span> parameters (four <span class="math inline">\(d\times d\)</span> attention projections plus an <span class="math inline">\(8d^2\)</span> feed-forward block at <span class="math inline">\(4\times\)</span> expansion), so weight bytes per layer are approximately <span class="math inline">\(W\approx12sd^2\)</span>. For a batch of <span class="math inline">\(B\)</span> sequences decoding at current context length <span class="math inline">\(n\)</span>, weights are loaded once per step and shared across the batch, while activation and KV-cache traffic scale with <span class="math inline">\(B\)</span>:</p>
+<p><span id="eq-decode-oi"></span></p>
+<p><span class="math display">\[
+\mathrm{OI}_{\mathrm{decode}}(B,n)\approx
+  \frac{B\cdot F_{\mathrm{tok}}(d,n)}{12sd^2+B\cdot M_{\mathrm{tok}}(d,n)}. \tag{15}
+\]</span></p>
+</section>
+<section id="batch-size-1-is-about-as-memory-bound-as-it-gets" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="batch-size-1-is-about-as-memory-bound-as-it-gets"><span class="header-section-number">8.2</span> Batch size 1 is about as memory-bound as it gets</h3>
+<p>At <span class="math inline">\(B=1\)</span>, weight bytes overwhelm the activation/KV term for any realistic <span class="math inline">\(d\)</span> and <span class="math inline">\(n\)</span>, so <a href="#eq-decode-oi">Equation 15</a> reduces to <span class="math inline">\(\mathrm{OI}_{\mathrm{decode}}(1,n)\approx F_{\mathrm{tok}}/12sd^2\approx\mathcal{O}(1)\)</span> FLOP/Byte, consistent with the well-known result that single-sequence decode is close to definitionally memory-bound, since roughly the same number of bytes and FLOPs touch each weight <span class="citation" data-cites="kipply2022">(<a href="#ref-kipply2022" role="doc-biblioref">Kipply 2022</a>)</span>. Concretely, for <span class="math inline">\(d=4096\)</span>, <span class="math inline">\(s=2\)</span> (BF16), and <span class="math inline">\(n=128\)</span>: <span class="math inline">\(F_{\mathrm{tok}}\approx2.03\times10^8\)</span>, <span class="math inline">\(12sd^2\approx4.03\times10^8\)</span>, giving <span class="math inline">\(\mathrm{OI}_{\mathrm{decode}}(1,128)\approx0.5\)</span> FLOP/Byte, one to two orders of magnitude below the 30–80 range this note otherwise treats as typical.</p>
+<p>This also exposes a gap worth flagging in this note’s own machinery: because <span class="math inline">\(M_{\mathrm{tok}}\)</span> omits weight bytes, <span class="math inline">\(\mathrm{OI}_{\mathrm{tok}}=F_{\mathrm{tok}}/M_{\mathrm{tok}}\)</span> from Section 5 simplifies algebraically to a constant, <span class="math inline">\(2d\)</span>, independent of context length. For <span class="math inline">\(d=4096\)</span>, that constant is 8192 FLOP/Byte, far above the 30–80 range Section 5 cites from empirical profiling in the same breath. The two are not actually in conflict: <span class="math inline">\(\mathrm{OI}_{\mathrm{tok}}\)</span> implicitly describes the weight-amortized, large-batch limit (prefill, or decode at very large <span class="math inline">\(B\)</span>), while the empirically observed 30–80 range reflects the batch sizes, kernel fusion overhead, and other frictions real serving systems actually operate under. But it means <span class="math inline">\(\mathrm{OI}_{\mathrm{tok}}\)</span> as written should not be read as a decode-batch-size-1 estimate; <a href="#eq-decode-oi">Equation 15</a> is needed for that regime, and the two formulas agree only in the <span class="math inline">\(B\to\infty\)</span> limit.</p>
+</section>
+<section id="how-much-batching-does-it-take-to-look-like-training" class="level3" data-number="8.3">
+<h3 data-number="8.3" class="anchored" data-anchor-id="how-much-batching-does-it-take-to-look-like-training"><span class="header-section-number">8.3</span> How much batching does it take to look like training?</h3>
+<p>Solving <a href="#eq-decode-oi">Equation 15</a> for the batch size at which decode reaches <span class="math inline">\(\mathrm{OI}=30\)</span> (the low end of this note’s typical range) gives <span class="math inline">\(B\approx60\)</span> at <span class="math inline">\(n=128\)</span> and <span class="math inline">\(B\approx36\)</span> at <span class="math inline">\(n=8{,}192\)</span>, for <span class="math inline">\(d=4096\)</span>. In other words, production continuous-batching schedulers must target several tens of concurrently decoding sequences for throughput. Below that, decode’s required bandwidth <span class="math inline">\(B_{\mathrm{req}}=C/\mathrm{OI}_{\mathrm{decode}}\)</span> is higher than anything considered in Section 7. At <span class="math inline">\(\mathrm{OI}\approx0.5\)</span> and <span class="math inline">\(C=1\)</span> PFLOP/s, <span class="math inline">\(B_{\mathrm{req}}\approx2{,}000\)</span> TB/s, roughly two orders of magnitude beyond the already-unreachable training-step figures in Section 7.1. If disaggregated bandwidth cannot feed a training step, it certainly cannot feed a low-batch decode step directly.</p>
+</section>
+<section id="where-disaggregated-memory-actually-fits-capacity-for-the-queue-not-bandwidth-for-the-step" class="level3" data-number="8.4">
+<h3 data-number="8.4" class="anchored" data-anchor-id="where-disaggregated-memory-actually-fits-capacity-for-the-queue-not-bandwidth-for-the-step"><span class="header-section-number">8.4</span> Where disaggregated memory actually fits: capacity for the queue, not bandwidth for the step</h3>
+<p>Decode’s dependence on batch size is precisely why real inference systems do not try to feed the active decode loop from a remote memory fabric. Instead, three production and research systems converge on the same pattern this note’s Section 7 predicts is the only viable one: run prefill (high-OI, training-like) and decode (low-OI, bandwidth-starved) on separately provisioned pools, and use a fast interconnect to hand off the KV cache produced by prefill to the decode pool. DistServe <span class="citation" data-cites="zhong2024">(<a href="#ref-zhong2024" role="doc-biblioref">Zhong et al. 2024</a>)</span> and Splitwise <span class="citation" data-cites="patel2024">(<a href="#ref-patel2024" role="doc-biblioref">Patel et al. 2024</a>)</span> both disaggregate prefill and decode onto different GPUs precisely because sharing one pool forces a compromise between time-to-first-token and time-per-token that neither phase’s intensity profile wants. Mooncake <span class="citation" data-cites="qin2025">(<a href="#ref-qin2025" role="doc-biblioref">Qin et al. 2025</a>)</span> goes further, building a KV-cache-centric store that spans GPU HBM, CPU DRAM, and SSD/RDMA-attached capacity. It uses slower, disaggregated tiers to hold KV cache for sequences that are not on the active decode critical path (queued, paused, or serving a resumed multi-turn conversation), so that the sequences actually decoding right now can stay batched large enough, and resident close enough to the compute, to sustain a workable <span class="math inline">\(\mathrm{OI}_{\mathrm{decode}}\)</span>. This is exactly the overflow-tier role described in <a href="../disaggregated-memory-ai-systems/#sec-disaggregated">Section 7 of Part I</a>, now grounded in systems that are deployed in production rather than hypothesized: disaggregated memory’s contribution to inference is capacity that lets the HBM-resident batch stay large, not bandwidth on the path of any single decode step.</p>
+</section>
+</section>
+<section id="sec-distributed" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="sec-distributed"><span class="header-section-number">9</span> Distributed Training: Communication Rooflines and Network Ceilings</h2>
+<p>Up to this point, we have focused on local memory and I/O bandwidth as the determinants of whether a training step is compute-bound. In distributed training, however, memory bandwidth is only one of two critical bandwidth channels. Even if an accelerator had sufficient SRAM/HBM or I/O bandwidth to approach the compute roofline, collective communication can impose a second and often tighter ceiling on end-to-end throughput.</p>
+<section id="communication-intensity-the-network-analogue-of-oi" class="level3" data-number="9.1">
+<h3 data-number="9.1" class="anchored" data-anchor-id="communication-intensity-the-network-analogue-of-oi"><span class="header-section-number">9.1</span> Communication intensity: the network analogue of OI</h3>
+<p>The same intensity-based reasoning used for memory extends directly to communication. For a training step that exchanges <span class="math inline">\(S\)</span> bytes of gradients or model state while executing <span class="math inline">\(F\)</span> FLOPs, we define the communication intensity</p>
+<p><span id="eq-ci"></span></p>
+<p><span class="math display">\[
+\mathrm{CI}\equiv\frac{S}{F}\qquad[\text{Byte/FLOP}],
+\tag{16}
+\]</span></p>
+<p>which is the network-side counterpart to operational intensity, <span class="math inline">\(\mathrm{OI}=F/M\)</span>.</p>
+<p>A device with compute rate <span class="math inline">\(C\)</span> and effective per-rank network bandwidth <span class="math inline">\(B_{\mathrm{net}}\)</span> can sustain at most</p>
+<p><span id="eq-ci-machine"></span></p>
+<p><span class="math display">\[
+\mathrm{CI}_{\mathrm{machine}}\equiv\frac{B_{\mathrm{net}}}{C}\qquad[\text{Byte/FLOP}],
+\tag{17}
+\]</span></p>
+<p>playing the same role for communication that <span class="math inline">\(\mathrm{MB}=C/B\)</span> plays for memory. Thus:</p>
+<p><span class="math display">\[
+\mathrm{CI}\ll\mathrm{CI}_{\mathrm{machine}}\Rightarrow\text{compute- or memory-bound},\qquad
+  \mathrm{CI}\gg\mathrm{CI}_{\mathrm{machine}}\Rightarrow\text{network-bound}.\]</span></p>
+</section>
+<section id="collective-communication-and-step-time-ceilings" class="level3" data-number="9.2">
+<h3 data-number="9.2" class="anchored" data-anchor-id="collective-communication-and-step-time-ceilings"><span class="header-section-number">9.2</span> Collective communication and step-time ceilings</h3>
+<p>A standard approximation for an optimized all-reduce over <span class="math inline">\(N\)</span> ranks is the <span class="math inline">\((\alpha,\beta)\)</span> model <span class="citation" data-cites="thakur2005">(<a href="#ref-thakur2005" role="doc-biblioref">Thakur et al. 2005</a>)</span>:</p>
+<p><span id="eq-allreduce"></span></p>
+<p><span class="math display">\[
+T_{\mathrm{allreduce}}(S,N)\approx\alpha\log N+\beta S,
+\tag{18}
+\]</span></p>
+<p>where <span class="math inline">\(\alpha\)</span> captures RTT-dominated latency and <span class="math inline">\(\beta\approx1/B_{\mathrm{net}}\)</span> captures the per-byte transfer cost. A training step becomes network-bound when</p>
+<p><span id="eq-network-bound"></span></p>
+<p><span class="math display">\[
+T_{\mathrm{comm}}\gtrsim T_{\mathrm{comp}},
+\tag{19}
+\]</span></p>
+<p>even if the device is compute-bound with respect to its local memory roofline.</p>
+<p>As an example, consider a training step that executes <span class="math inline">\(F=10^{15}\)</span> FLOP (one second of full-utilization compute on a <span class="math inline">\(C=1\)</span> PFLOP/s device) while synchronizing <span class="math inline">\(S=400\)</span> GB <span class="math inline">\(=4\times10^{11}\)</span> Byte of gradient or expert-routing state per step, representative of an unsharded gradient all-reduce for a very large model or aggregate MoE all-to-all traffic. The communication intensity is <span class="math display">\[\mathrm{CI}=\frac{S}{F}=\frac{4\times10^{11}}{10^{15}}=4\times10^{-4}\ \text{Byte/FLOP}.\]</span> With a per-rank scale-out network bandwidth of <span class="math inline">\(B_{\mathrm{net}}=50\)</span> GB/s <span class="math inline">\(=5\times10^{10}\)</span> Byte/s (typical of a single 400 Gb/s NIC per accelerator), we obtain <span class="math display">\[\mathrm{CI}_{\mathrm{machine}}=\frac{B_{\mathrm{net}}}{C}=\frac{5\times10^{10}}{10^{15}}=5\times10^{-5}\ \text{Byte/FLOP},\]</span> so <span class="math inline">\(\mathrm{CI}\approx8\mathrm{CI}_{\mathrm{machine}}\)</span>. Equivalently, <span class="math inline">\(T_{\mathrm{comp}}=F/C=1\)</span> s while <span class="math inline">\(T_{\mathrm{comm}}\approx S/B_{\mathrm{net}}=8\)</span> s: communication takes roughly <span class="math inline">\(8\times\)</span> longer than compute and dominates step time, even though local SRAM/HBM bandwidth is sufficient to reach the compute roof.</p>
+</section>
+<section id="interaction-with-disaggregated-memory" class="level3" data-number="9.3">
+<h3 data-number="9.3" class="anchored" data-anchor-id="interaction-with-disaggregated-memory"><span class="header-section-number">9.3</span> Interaction with disaggregated memory</h3>
+<p>It is important to note that disaggregated memory does not directly mitigate these communication limits. Even if <a href="../disaggregated-memory-ai-systems/#sec-disaggregated">Section 7 of Part I</a> had shown that remote memory could supply the bandwidth needed to reach the compute roofline (it does not), distributed gradient synchronization would still impose a separate ceiling governed by CI and <span class="math inline">\(B_{\mathrm{net}}\)</span>. Increasing memory capacity or remote access bandwidth can change how models are sharded and what must be communicated, but without raising <span class="math inline">\(B_{\mathrm{net}}\)</span> it cannot, by itself, remove a regime in which network bandwidth and latency dominate step time.</p>
+</section>
+<section id="summary" class="level3" data-number="9.4">
+<h3 data-number="9.4" class="anchored" data-anchor-id="summary"><span class="header-section-number">9.4</span> Summary</h3>
+<p>Communication introduces an additional roofline, governed by CI and network bandwidth, that is conceptually parallel to the memory roofline based on OI and <span class="math inline">\(B\)</span>. Real systems must satisfy both ceilings: <span class="math display">\[T_{\mathrm{step}}=\max\{T_{\mathrm{memory}},T_{\mathrm{network}}\}.\]</span> This dual-ceiling structure motivates the broader design implications discussed in <a href="#sec-design" class="quarto-xref">Section&nbsp;10</a> and highlights why raising the correct bandwidth ceiling, whether local or network, is essential for improving end-to-end training throughput.</p>
+</section>
+</section>
+<section id="sec-design" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="sec-design"><span class="header-section-number">10</span> Design Implications</h2>
+<p>Building on the communication roofline introduced in <a href="#sec-distributed" class="quarto-xref">Section&nbsp;9</a>, we now summarize how both memory-side and network-side ceilings jointly determine end-to-end training performance. The equations above provide a short checklist for diagnosing where training is limited across compute, memory, I/O, and network:</p>
+<ul>
+<li><p><strong>Local memory vs.&nbsp;compute (device roofline):</strong> Compare kernel or step OI to the machine balance <span class="math inline">\(\mathrm{MB}=C/B\)</span> for the relevant tier (HBM, SRAM+HBM, or disaggregated memory). If <span class="math inline">\(\mathrm{OI}&lt;\mathrm{MB}\)</span>, the step is fundamentally bandwidth-bound at that tier; increasing <span class="math inline">\(C\)</span> alone will not improve performance.</p></li>
+<li><p><strong>SRAM tiers:</strong> A fast SRAM tier raises the effective bandwidth <span class="math inline">\(B_{\mathrm{eff}}\approx hB_{\mathrm{SRAM}}+(1-h)B_{\mathrm{HBM}}\)</span> and thus increases utilization <span class="math inline">\(U=T/C\)</span>. However, the worked example shows that even a substantial <span class="math inline">\(B_{\mathrm{SRAM}}\)</span> may not be enough to make realistic transformer workloads compute-bound if their OI remains well below the resulting MB.</p></li>
+<li><p><strong>Disaggregated memory and I/O ceilings:</strong> Disaggregation primarily raises capacity. It only improves utilization in our model if the delivered bandwidth <span class="math inline">\(B_{\mathrm{delivered}}\leq\min\{B_{\mathrm{remote\ mem}},B_{\mathrm{IO}}\}\)</span> is large enough that <span class="math inline">\(\mathrm{MB}_{\mathrm{disagg}}=C/B_{\mathrm{delivered}}\)</span> approaches the OI of real workloads, and even then the gain is bounded by the fraction of traffic that can be served without making the disaggregated interface the active limiting tier. When <span class="math inline">\(\mathrm{OI}\ll\mathrm{MB}_{\mathrm{disagg}}\)</span>, the system remains memory-bound regardless of how large the remote pool is.</p></li>
+<li><p><strong>Network collectives (communication roofline):</strong> For distributed training, the <span class="math inline">\((\alpha,\beta)\)</span> all-reduce model <span class="math inline">\(T_{\mathrm{allreduce}}(S,N)\approx\alpha\log N+\beta S\)</span> and the communication intensity <span class="math display">\[\mathrm{CI}=\frac{\text{Bytes communicated}}{\text{FLOPs executed}}\]</span> play the same role on the network that OI does for memory. Comparing CI to the machine-level quantity <span class="math display">\[\mathrm{CI}_{\mathrm{machine}}=\frac{B_{\mathrm{net}}}{C}\]</span> tells us when network bandwidth and latency become the dominant bottlenecks. As shown in <a href="#sec-distributed" class="quarto-xref">Section&nbsp;9</a>, high CI can make a step communication-bound even if local memory bandwidth is sufficient to approach the compute roofline. This mirrors the structure of the memory roofline: low OI places a step on the memory-bound slope, while high CI places it on the communication-bound slope.</p></li>
+</ul>
+<p>From a system-design perspective, every proposed feature, including additional HBM stacks, an SRAM tier, disaggregated memory, in-memory primitives, in-network aggregation, or more network bandwidth, should be evaluated in terms of:</p>
+<blockquote class="blockquote">
+<p>Which ceiling does this raise (compute, local memory bandwidth, off-package I/O, or network bandwidth), and is that ceiling the dominant limiter for the workload’s operational and communication intensities?</p>
+</blockquote>
+<p>Memory-side ceilings (OI vs.&nbsp;MB) and network-side ceilings (CI vs.&nbsp;<span class="math inline">\(\mathrm{CI}_{\mathrm{machine}}\)</span>) are largely independent at the hardware-ceiling level. Improving one generally does not remove the other: as <a href="#sec-distributed" class="quarto-xref">Section&nbsp;9</a> demonstrated, even idealized memory capacity and bandwidth cannot overcome a communication-bound regime. Effective system design therefore requires identifying which ceiling is currently active for a given workload and parallelization strategy, and raising the one that actually limits step time.</p>
+</section>
+<section id="sec-future-work" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="sec-future-work"><span class="header-section-number">11</span> Future Work and Open Questions</h2>
+<p>This note has deliberately focused on intensity-based upper bounds using simplified bandwidth models for local and disaggregated memory, and has omitted several important practical effects (latency and RTT sensitivity, bandwidth-delay product constraints, queuing and prefetch depth, granularity and coherence behavior, and memory reliability and error rates) in order to maintain analytical clarity.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> These omissions affect the two ceilings differently. For the pure bandwidth ceilings (<span class="math inline">\(B_{\mathrm{HBM}}\)</span>, <span class="math inline">\(B_{\mathrm{SRAM}}\)</span>, <span class="math inline">\(B_{\mathrm{IO}}\)</span>, <span class="math inline">\(B_{\mathrm{net}}\)</span>), they are genuinely conservative in the sense we intend: no amount of scheduling or software cleverness lets a system move more bytes per second than a link’s physical bandwidth allows, so ignoring queuing or error-rate overhead only removes headroom, never adds it. For the latency-driven terms specifically (<span class="math inline">\(\alpha\)</span>, RTT, bandwidth-delay product), the direction is less clean: real systems use prefetching, double buffering, and compute/communication overlap precisely to hide these costs behind useful work, so a naive model that ignores them is not guaranteed to be conservative in the same sense; it may simply be omitting a term that well-engineered software already hides. We flag this distinction explicitly because it is easy to conflate “bandwidth-conservative” with “conservative in every respect,” and only the former is supported by the argument in this note. These choices leave a number of questions open for future work:</p>
+<ul>
+<li><p><strong>Trace-driven tiered-memory analysis.</strong> The present model treats each memory or I/O tier as a single limiting roofline. An important next step is to incorporate measured traces from large-model training and inference runs to quantify the fraction of bytes served by each tier (SRAM, HBM, and disaggregated memory), and to evaluate step time using a simple multi-term bound such as <span class="math display">\[T_{\mathrm{step}}\geq\max\left(\frac{F}{C},\frac{M_{\mathrm{SRAM/HBM}}}{B_{\mathrm{SRAM/HBM}}},\frac{M_{\mathrm{remote}}}{B_{\mathrm{IO}}}\right).\]</span> This would more directly characterize regimes where disaggregated memory is used as an overflow tier rather than as the primary bandwidth source.</p></li>
+<li><p><strong>Latency, BDP, and outstanding concurrency.</strong> While we model <span class="math inline">\(B_{\mathrm{IO}}\)</span> as an idealized peak, real fabrics are limited by RTT, bandwidth-delay product, and finite queue depth. A useful extension would couple the intensity view with a simple model of outstanding requests and prefetch depth, quantifying the delivered bandwidth as a function of RTT and access pattern, and identifying the break-even points where remote memory transitions from tolerable to dominant in step time.</p></li>
+<li><p><strong>Kernel mix and intensity distributions.</strong> We treat transformer training steps using a single effective operational intensity in the “tens of FLOP/Byte” range. Future work should report the distribution of OI across the constituent kernels and phases (e.g., matmuls versus softmax, layernorm, and elementwise operations), and apply the roofline analysis at this finer granularity to understand which phases are most sensitive to bandwidth at each tier.</p></li>
+<li><p><strong>Coupled memory-communication behavior in distributed training.</strong> The current communication roofline treats communication intensity CI as a property of the workload independent of local memory capacity. In practice, changes in per-rank memory capacity (e.g., via disaggregation) can alter sharding strategies, checkpointing policies, and gradient accumulation, thereby changing the communicated volume <span class="math inline">\(S\)</span> and effective CI. Trace-driven studies that jointly vary memory capacity, parallelization strategy, and network bandwidth would clarify how often capacity-oriented features indirectly shift the active communication ceiling.</p></li>
+<li><p><strong>Cost- and energy-normalized ceiling comparisons.</strong> Finally, the framework here is expressed in physical units (FLOP/s, Byte/s) rather than in $ or W. A natural extension is to integrate cost and power models for additional HBM stacks, SRAM tiers, disaggregated memory fabrics, and network upgrades, and to compare these options on performance-per-dollar and performance-per-watt for representative ranges of OI and CI.</p></li>
+</ul>
+<p>Overall, these directions would retain the simplicity of the intensity-based view while bringing it closer to end-to-end system behavior, especially in regimes where disaggregated memory is used primarily as a capacity extension rather than a replacement for on-package bandwidth.</p>
+</section>
+<section id="sec-conclusion" class="level2" data-number="12">
+<h2 data-number="12" class="anchored" data-anchor-id="sec-conclusion"><span class="header-section-number">12</span> Conclusion</h2>
+<p>This note has developed a unified, intensity-based framework for reasoning about the performance limits of large-scale AI training across compute, memory, I/O, and network domains. By expressing kernels and training steps in terms of their operational intensity (OI) and communication intensity (CI), we can evaluate any architectural change with respect to the ceilings it must overcome: compute throughput <span class="math inline">\(C\)</span>, local memory bandwidth <span class="math inline">\(B\)</span>, off-package I/O bandwidth <span class="math inline">\(B_{\mathrm{IO}}\)</span>, and network bandwidth <span class="math inline">\(B_{\mathrm{net}}\)</span>.</p>
+<p>For device-local execution, the roofline model shows that workloads with <span class="math inline">\(\mathrm{OI}&lt;\mathrm{MB}=C/B\)</span> are fundamentally memory-bound. Even with large SRAM tiers or multiple HBM stacks, realistic transformer OI values remain far below the machine balance of modern accelerators. As shown in <a href="../disaggregated-memory-ai-systems/#sec-disaggregated">Section 7 of Part I</a>, disaggregated memory increases capacity but does not deliver sufficient bandwidth to reach the compute roofline, leaving such workloads in a memory-bound regime.</p>
+<p><a href="#sec-distributed" class="quarto-xref">Section&nbsp;9</a> introduced the communication roofline, the direct analogue of the memory roofline for distributed training. When the communication intensity CI exceeds the machine-level ratio <span class="math inline">\(B_{\mathrm{net}}/C\)</span>, or when RTT inflates the latency term <span class="math inline">\(\alpha\)</span>, collective communication becomes the dominant limiter even if local memory bandwidth is ample. In multi-site deployments, these effects are further amplified by heterogeneous RTTs and WAN bandwidth ceilings.</p>
+<p>Taken together, these results highlight a central theme: meaningful performance gains require raising the correct ceiling for the workload’s intensities. Additional FLOPs, larger memory pools, higher-capacity disaggregated memory systems, or more complex interconnects provide benefit only to the extent that they lift the active ceiling in either the memory or communication roofline. The framework developed here provides a quantitative basis for evaluating architectural decisions, memory hierarchies, network designs, and multi-site training strategies in a consistent and comparable manner. The bandwidth ceilings themselves are conservative upper bounds: no scheduling or software technique can exceed a link’s physical throughput. The latency-driven effects we neglect, including RTT, BDP, and queue depth, are not guaranteed to move the picture in the same direction, since real systems can partially hide them through overlap and prefetching; we omit them for analytical clarity, not because ignoring them is safely one-sided.</p>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-kipply2022" class="csl-entry" role="listitem">
+Kipply. 2022. <span>“Transformer Inference Arithmetic.”</span>
+</div>
+<div id="ref-patel2024" class="csl-entry" role="listitem">
+Patel, P., E. Choukse, C. Zhang, et al. 2024. <span>“Splitwise: Efficient Generative LLM Inference Using Phase Splitting.”</span> <em>51st Annual International Symposium on Computer Architecture (ISCA ’24)</em>.
+</div>
+<div id="ref-qin2025" class="csl-entry" role="listitem">
+Qin, R., Z. Li, W. He, et al. 2025. <span>“Mooncake: A KVCache-Centric Disaggregated Architecture for LLM Serving.”</span> <em>23rd USENIX Conference on File and Storage Technologies (FAST ’25)</em>.
+</div>
+<div id="ref-thakur2005" class="csl-entry" role="listitem">
+Thakur, Rajeev, Rolf Rabenseifner, and William Gropp. 2005. <span>“Optimization of Collective Communication Operations in MPICH.”</span> <em>International Journal of High Performance Computing Applications</em>.
+</div>
+<div id="ref-zhong2024" class="csl-entry" role="listitem">
+Zhong, Y., S. Liu, J. Chen, et al. 2024. <span>“DistServe: Disaggregating Prefill and Decoding for Goodput-Optimized Large Language Model Serving.”</span> <em>18th USENIX Symposium on Operating Systems Design and Implementation (OSDI ’24)</em>.
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Continue exploring">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Continue exploring
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Return to <a href="../disaggregated-memory-ai-systems/">Part I</a> for the foundations and complete device-memory analysis.</p>
+</div>
+</div>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>See the discussion of scope and simplifying assumptions in <a href="../disaggregated-memory-ai-systems/#sec-introduction">Section 1 of Part I</a>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/infinitelimit\.ai");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark_dimmed">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      if (authorPrefersDark) {
+          [baseTheme, altTheme] = [altTheme, baseTheme];
+      }
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "btoptical/blog";
+    script.dataset.repoId = "R_kgDOQ0-UbQ";
+    script.dataset.category = "Announcements";
+    script.dataset.categoryId = "DIC_kwDOQ0-Ubc4DDvJl";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "bottom";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>© 2026 Brian Taylor · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></p>
+</div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

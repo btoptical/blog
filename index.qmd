@@ -3,7 +3,7 @@ title: ""
 listing:
   contents: posts
   template: _templates/post-listing.ejs.md
-  sort: "date desc"
+  sort: "date-modified desc"
   date-format: long
   feed:
     type: partial

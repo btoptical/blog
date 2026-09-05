@@ -8,6 +8,10 @@ Published
 
 January 6, 2026
 
+Modified
+
+January 6, 2026
+
 ## Motivation
 
 Real systems approach limits long before theory reaches infinity.

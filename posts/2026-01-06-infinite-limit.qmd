@@ -1,6 +1,7 @@
 ---
 title: "On Infinite Limits"
 date: 2026-01-06
+date-modified: 2026-01-06
 categories: [Performance]
 description: "Real systems approach limits long before theory reaches infinity."
 image: /images/limit.svg

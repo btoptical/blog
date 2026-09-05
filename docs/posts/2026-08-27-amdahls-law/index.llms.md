@@ -14,6 +14,10 @@ Published
 
 August 27, 2026
 
+Modified
+
+August 27, 2026
+
 *Welcome to Infinite Limit. This is first in a series where we ask a single question asked over and over in different settings: what happens as \\N\\ becomes very large? It seemed fitting to start with Amdahl’s law.*
 
 > **NOTE:**

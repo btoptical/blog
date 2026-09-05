@@ -3,6 +3,7 @@ title: "Amdahl's Law: The Speedup You Cannot Exceed"
 subtitle: "A practical guide"
 author: "Brian D. Taylor"
 date: 2026-08-27
+date-modified: 2026-08-27
 categories: [Performance]
 description: "A reference post defining Amdahl's law in words and mathematics."
 bibliography: references.bib
