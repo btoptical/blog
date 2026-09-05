@@ -54,7 +54,9 @@ AAOI adds a third IPO benchmark. Its September 2013 IPO priced at \$10 per share
 | Acacia | March 2016 | \$276.3M | \$820.1M | 2.97x |
 | Infinera | March 2007 | \$104.8M | \$1,080.8M | 10.32x |
 
-![Historical IPO equity valuation versus trailing revenue, in July 2026 dollars.](assets/ipo_value_vs_revenue_2026.svg) {#fig-ipo-comparison width=100% fig-align=“center”}
+![](assets/ipo_value_vs_revenue_2026.svg)
+
+Figure 1: Historical IPO equity valuation versus trailing revenue, in July 2026 dollars.
 
 Each multiple uses the latest disclosed trailing twelve months before IPO. AAOI’s datacenter business contributed about 21% of trailing revenue, with CATV still its largest market. Its 29.1% margin is company-wide.
 
@@ -76,7 +78,9 @@ Applying each IPO revenue multiple to the disclosed startup valuations gives:
 | Lightmatter |         \$2.42B |           \$1.48B |              \$0.43B |
 | Lumilens    |         \$3.02B |           \$1.86B |              \$0.53B |
 
-![Annual revenue required at each historical IPO multiple for the disclosed startup valuations.](assets/startup_required_revenue.svg) {#fig-required-revenue width=100% fig-align=“center”}
+![](assets/startup_required_revenue.svg)
+
+Figure 2: Annual revenue required at each historical IPO multiple for the disclosed startup valuations.
 
 These are comparable-multiple calculations, not forecasts or mandatory revenue thresholds. Investors can reasonably pay more for faster growth, stronger competitive advantages, or a larger opportunity. But those premiums need an economic explanation.
 
