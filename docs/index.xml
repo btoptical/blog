@@ -10,7 +10,19 @@
 <atom:link href="https://infinitelimit.ai/index.xml" rel="self" type="application/rss+xml"/>
 <description>Notes and essays on AI infrastructure, systems architecture, scaling, and physical limits.</description>
 <generator>quarto-1.10.18</generator>
-<lastBuildDate>Thu, 27 Aug 2026 07:00:00 GMT</lastBuildDate>
+<lastBuildDate>Fri, 04 Sep 2026 07:00:00 GMT</lastBuildDate>
+<item>
+  <title>AI Optics Is Being Priced for Success Before the Economics Are Proven</title>
+  <dc:creator>Brian D. Taylor</dc:creator>
+  <link>https://infinitelimit.ai/posts/ai-optics-valuations/</link>
+  <description><![CDATA[ Comparing optical startup valuations with historical IPO revenue multiples, gross margins, and implied shipment volumes. ]]></description>
+  <category>AI infrastructure</category>
+  <category>Optical interconnects</category>
+  <category>Valuation</category>
+  <guid>https://infinitelimit.ai/posts/ai-optics-valuations/</guid>
+  <pubDate>Fri, 04 Sep 2026 07:00:00 GMT</pubDate>
+  <media:content url="https://infinitelimit.ai/posts/ai-optics-valuations/assets/startup_required_revenue.png" medium="image" type="image/png" height="92" width="144"/>
+</item>
 <item>
   <title>Amdahl’s Law: The Speedup You Cannot Exceed</title>
   <dc:creator>Brian D. Taylor</dc:creator>

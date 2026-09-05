@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/ai-optics-valuations/index.html",
       "/posts/disaggregated-memory-ai-systems-part-2/index.html",
       "/posts/disaggregated-memory-ai-systems/index.html",
       "/posts/2026-08-27-amdahls-law/index.html",

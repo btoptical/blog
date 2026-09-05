@@ -1,3 +1,11 @@
+Published September 4, 2026
+
+## [AI Optics Is Being Priced for Success Before the Economics Are Proven](posts/ai-optics-valuations/index.llms.md)
+
+[![Annual revenue required to support disclosed startup valuations at AAOI, Acacia, and Infinera IPO multiples](./posts/ai-optics-valuations/assets/startup_required_revenue.png)](posts/ai-optics-valuations/index.llms.md)
+
+Comparing optical startup valuations with historical IPO revenue multiples, gross margins, and implied shipment volumes.
+
 Published December 10, 2025 · Updated September 4, 2026
 
 ## [Quantifying the Utility of Disaggregated Memory in AI Systems, Part II](posts/disaggregated-memory-ai-systems-part-2/index.llms.md)

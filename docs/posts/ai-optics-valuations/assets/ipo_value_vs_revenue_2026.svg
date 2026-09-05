@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="864pt" height="576pt" viewBox="0 0 864 576" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-09-04T20:18:26.662878</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 576 
+L 864 576 
+L 864 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 86.4 414.72 
+L 812.16 414.72 
+L 812.16 115.2 
+L 86.4 115.2 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="line2d_1">
+    <path d="M 86.4 414.72 
+L 783.1296 298.319501 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke-dasharray: 4,5; stroke-dashoffset: 0; stroke: #bdc8d0"/>
+   </g>
+   <g id="line2d_2">
+    <path d="M 86.4 414.72 
+L 783.1296 225.063903 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke-dasharray: 4,5; stroke-dashoffset: 0; stroke: #bdc8d0"/>
+   </g>
+   <g id="line2d_3">
+    <path d="M 86.4 414.72 
+L 388.940377 128.512 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke-dasharray: 4,5; stroke-dashoffset: 0; stroke: #bdc8d0"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_4">
+      <path d="M 86.4 414.72 
+L 86.4 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_5"/>
+     <g id="text_1">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="86.4" y="429.318437" transform="rotate(-0 86.4 429.318437)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_6">
+      <path d="M 231.552 414.72 
+L 231.552 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_7"/>
+     <g id="text_2">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="231.552" y="429.318437" transform="rotate(-0 231.552 429.318437)">100</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_8">
+      <path d="M 376.704 414.72 
+L 376.704 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_9"/>
+     <g id="text_3">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="376.704" y="429.318437" transform="rotate(-0 376.704 429.318437)">200</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_10">
+      <path d="M 521.856 414.72 
+L 521.856 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_11"/>
+     <g id="text_4">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="521.856" y="429.318437" transform="rotate(-0 521.856 429.318437)">300</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_12">
+      <path d="M 667.008 414.72 
+L 667.008 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_13"/>
+     <g id="text_5">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="667.008" y="429.318437" transform="rotate(-0 667.008 429.318437)">400</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_14">
+      <path d="M 812.16 414.72 
+L 812.16 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_15"/>
+     <g id="text_6">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="812.16" y="429.318437" transform="rotate(-0 812.16 429.318437)">500</text>
+     </g>
+    </g>
+    <g id="text_7">
+     <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="449.28" y="450.996562" transform="rotate(-0 449.28 450.996562)">Trailing 12-month GAAP revenue (US$ millions)</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_16">
+      <path d="M 86.4 414.72 
+L 812.16 414.72 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_17"/>
+     <g id="text_8">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="418.519219" transform="rotate(-0 79.4 418.519219)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_18">
+      <path d="M 86.4 381.44 
+L 812.16 381.44 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_19"/>
+     <g id="text_9">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="385.239219" transform="rotate(-0 79.4 385.239219)">250</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_20">
+      <path d="M 86.4 348.16 
+L 812.16 348.16 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_21"/>
+     <g id="text_10">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="351.959219" transform="rotate(-0 79.4 351.959219)">500</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_22">
+      <path d="M 86.4 314.88 
+L 812.16 314.88 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_23"/>
+     <g id="text_11">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="318.679219" transform="rotate(-0 79.4 318.679219)">750</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_24">
+      <path d="M 86.4 281.6 
+L 812.16 281.6 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_25"/>
+     <g id="text_12">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="285.399219" transform="rotate(-0 79.4 285.399219)">1000</text>
+     </g>
+    </g>
+    <g id="ytick_6">
+     <g id="line2d_26">
+      <path d="M 86.4 248.32 
+L 812.16 248.32 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_27"/>
+     <g id="text_13">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="252.119219" transform="rotate(-0 79.4 252.119219)">1250</text>
+     </g>
+    </g>
+    <g id="ytick_7">
+     <g id="line2d_28">
+      <path d="M 86.4 215.04 
+L 812.16 215.04 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_29"/>
+     <g id="text_14">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="218.839219" transform="rotate(-0 79.4 218.839219)">1500</text>
+     </g>
+    </g>
+    <g id="ytick_8">
+     <g id="line2d_30">
+      <path d="M 86.4 181.76 
+L 812.16 181.76 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_31"/>
+     <g id="text_15">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="185.559219" transform="rotate(-0 79.4 185.559219)">1750</text>
+     </g>
+    </g>
+    <g id="ytick_9">
+     <g id="line2d_32">
+      <path d="M 86.4 148.48 
+L 812.16 148.48 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_33"/>
+     <g id="text_16">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="152.279219" transform="rotate(-0 79.4 152.279219)">2000</text>
+     </g>
+    </g>
+    <g id="ytick_10">
+     <g id="line2d_34">
+      <path d="M 86.4 115.2 
+L 812.16 115.2 
+" clip-path="url(#p7652fa8cd3)" style="fill: none; stroke: #e4e9ed; stroke-width: 0.8; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_35"/>
+     <g id="text_17">
+      <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: end" x="79.4" y="118.999219" transform="rotate(-0 79.4 118.999219)">2250</text>
+     </g>
+    </g>
+    <g id="text_18">
+     <text style="fill: #526273; font: 10px 'DejaVu Sans'; text-anchor: middle" x="39.870313" y="264.96" transform="rotate(-90 39.870313 264.96)">IPO equity valuation (US$ millions)</text>
+    </g>
+   </g>
+   <g id="text_19">
+    <text style="fill: #83929e; font: 10px 'DejaVu Sans'; text-anchor: start" x="787.48416" y="301.078876" transform="rotate(-0 787.48416 301.078876)">1.82×</text>
+   </g>
+   <g id="text_20">
+    <text style="fill: #83929e; font: 10px 'DejaVu Sans'; text-anchor: start" x="787.48416" y="227.823278" transform="rotate(-0 787.48416 227.823278)">2.97×</text>
+   </g>
+   <g id="text_21">
+    <text style="fill: #83929e; font: 10px 'DejaVu Sans'; text-anchor: start" x="393.294937" y="131.271375" transform="rotate(-0 393.294937 131.271375)">10.32×</text>
+   </g>
+   <g id="PathCollection_1">
+    <defs>
+     <path id="mf8f457fabf" d="M 0 6.22495 
+C 1.650876 6.22495 3.234359 5.56905 4.401704 4.401704 
+C 5.56905 3.234359 6.22495 1.650876 6.22495 0 
+C 6.22495 -1.650876 5.56905 -3.234359 4.401704 -4.401704 
+C 3.234359 -5.56905 1.650876 -6.22495 0 -6.22495 
+C -1.650876 -6.22495 -3.234359 -5.56905 -4.401704 -4.401704 
+C -5.56905 -3.234359 -6.22495 -1.650876 -6.22495 0 
+C -6.22495 1.650876 -5.56905 3.234359 -4.401704 4.401704 
+C -3.234359 5.56905 -1.650876 6.22495 0 6.22495 
+z
+" style="stroke: #ffffff; stroke-width: 1.5"/>
+    </defs>
+    <g clip-path="url(#p7652fa8cd3)">
+     <use xlink:href="#mf8f457fabf" x="643.867917" y="262.972192" style="fill: #187f78; stroke: #ffffff; stroke-width: 1.5"/>
+    </g>
+   </g>
+   <g id="PathCollection_2">
+    <defs>
+     <path id="m2f4b8ce342" d="M 0 6.22495 
+C 1.650876 6.22495 3.234359 5.56905 4.401704 4.401704 
+C 5.56905 3.234359 6.22495 1.650876 6.22495 0 
+C 6.22495 -1.650876 5.56905 -3.234359 4.401704 -4.401704 
+C 3.234359 -5.56905 1.650876 -6.22495 0 -6.22495 
+C -1.650876 -6.22495 -3.234359 -5.56905 -4.401704 -4.401704 
+C -5.56905 -3.234359 -6.22495 -1.650876 -6.22495 0 
+C -6.22495 1.650876 -5.56905 3.234359 -4.401704 4.401704 
+C -3.234359 5.56905 -1.650876 6.22495 0 6.22495 
+z
+" style="stroke: #ffffff; stroke-width: 1.5"/>
+    </defs>
+    <g clip-path="url(#p7652fa8cd3)">
+     <use xlink:href="#m2f4b8ce342" x="330.13778" y="184.140191" style="fill: #527d96; stroke: #ffffff; stroke-width: 1.5"/>
+    </g>
+   </g>
+   <g id="PathCollection_3">
+    <defs>
+     <path id="m40fb94651c" d="M 0 6.22495 
+C 1.650876 6.22495 3.234359 5.56905 4.401704 4.401704 
+C 5.56905 3.234359 6.22495 1.650876 6.22495 0 
+C 6.22495 -1.650876 5.56905 -3.234359 4.401704 -4.401704 
+C 3.234359 -5.56905 1.650876 -6.22495 0 -6.22495 
+C -1.650876 -6.22495 -3.234359 -5.56905 -4.401704 -4.401704 
+C -5.56905 -3.234359 -6.22495 -1.650876 -6.22495 0 
+C -6.22495 1.650876 -5.56905 3.234359 -4.401704 4.401704 
+C -3.234359 5.56905 -1.650876 6.22495 0 6.22495 
+z
+" style="stroke: #ffffff; stroke-width: 1.5"/>
+    </defs>
+    <g clip-path="url(#p7652fa8cd3)">
+     <use xlink:href="#m40fb94651c" x="229.625437" y="390.791761" style="fill: #a06437; stroke: #ffffff; stroke-width: 1.5"/>
+    </g>
+   </g>
+   <g id="text_22">
+    <g id="patch_3">
+     <path d="M 418.115729 332.047255 
+L 632.912917 332.047255 
+L 632.912917 285.89713 
+L 418.115729 285.89713 
+z
+" style="fill: #ffffff; opacity: 0.95"/>
+    </g>
+    <text style="fill: #187f78; font: 10.5px 'DejaVu Sans'" transform="translate(421.160729 296.920489)">Acacia Communications · May 2016 IPO</text>
+    <text style="fill: #187f78; font: 10.5px 'DejaVu Sans'" transform="translate(429.629635 311.869536)">$384.1M revenue / $1,140M valuation</text>
+    <text style="fill: #187f78; font: 10.5px 'DejaVu Sans'" transform="translate(551.367292 326.818583)">2.97× revenue</text>
+   </g>
+   <g id="text_23">
+    <g id="patch_4">
+     <path d="M 341.09278 212.215253 
+L 547.421061 212.215253 
+L 547.421061 166.065128 
+L 341.09278 166.065128 
+z
+" style="fill: #ffffff; opacity: 0.95"/>
+    </g>
+    <text style="fill: #527d96; font: 10.5px 'DejaVu Sans'" transform="translate(344.13778 177.088487)">Infinera · June 2007 IPO</text>
+    <text style="fill: #527d96; font: 10.5px 'DejaVu Sans'" transform="translate(344.13778 192.037534)">$167.9M revenue / $1,732M valuation</text>
+    <text style="fill: #527d96; font: 10.5px 'DejaVu Sans'" transform="translate(344.13778 206.986581)">10.32× revenue</text>
+   </g>
+   <g id="text_24">
+    <g id="patch_5">
+     <path d="M 240.580437 389.866824 
+L 430.210437 389.866824 
+L 430.210437 343.716699 
+L 240.580437 343.716699 
+z
+" style="fill: #ffffff; opacity: 0.95"/>
+    </g>
+    <text style="fill: #a06437; font: 10.5px 'DejaVu Sans'" transform="translate(243.625437 354.740058)">AAOI · September 2013 IPO</text>
+    <text style="fill: #a06437; font: 10.5px 'DejaVu Sans'" transform="translate(243.625437 369.689105)">$98.7M revenue / $180M valuation</text>
+    <text style="fill: #a06437; font: 10.5px 'DejaVu Sans'" transform="translate(243.625437 384.638152)">1.82× revenue</text>
+   </g>
+  </g>
+  <g id="text_25">
+   <text style="fill: #172b3a; font: 700 25px 'DejaVu Sans'; text-anchor: start" x="60.48" y="36.288" transform="rotate(-0 60.48 36.288)">IPO valuation versus revenue</text>
+  </g>
+  <g id="text_26">
+   <text style="fill: #526273; font: 13px 'DejaVu Sans'; text-anchor: start" x="60.48" y="65.664" transform="rotate(-0 60.48 65.664)">AAOI, Acacia and Infinera · both axes in July 2026 dollars</text>
+  </g>
+  <g id="text_27">
+   <text style="fill: #596a79; font: 8.1px 'DejaVu Sans'; text-anchor: start" x="60.48" y="472.32" transform="rotate(-0 60.48 472.32)">Revenue: latest disclosed trailing 12 months before IPO; full year minus prior interim plus current interim.</text>
+  </g>
+  <g id="text_28">
+   <text style="fill: #596a79; font: 8.1px 'DejaVu Sans'; text-anchor: start" x="60.48" y="487.296" transform="rotate(-0 60.48 487.296)">Valuation: IPO offer price × post-offering basic shares; excludes the underwriters’ additional-share option and unissued awards.</text>
+  </g>
+  <g id="text_29">
+   <text style="fill: #596a79; font: 8.1px 'DejaVu Sans'; text-anchor: start" x="60.48" y="502.272" transform="rotate(-0 60.48 502.272)">Both coordinates use IPO-month CPI, preserving nominal revenue multiples; July 2026 CPI-U = 333.918.</text>
+  </g>
+  <g id="text_30">
+   <text style="fill: #596a79; font: 8.1px 'DejaVu Sans'; text-anchor: start" x="60.48" y="517.248" transform="rotate(-0 60.48 517.248)">Infinera deferred substantial bundled-product revenue. Its GAAP-revenue multiple does not measure its shipment-value multiple.</text>
+  </g>
+  <g id="text_31">
+   <text style="fill: #596a79; font: 8.1px 'DejaVu Sans'; text-anchor: start" x="60.48" y="532.224" transform="rotate(-0 60.48 532.224)">Dashed lines show constant valuation/revenue ratios, not a fitted relationship. Three observations do not establish a valuation model.</text>
+  </g>
+  <g id="text_32">
+   <text style="fill: #596a79; font: 8.1px 'DejaVu Sans'; text-anchor: start" x="60.48" y="547.2" transform="rotate(-0 60.48 547.2)">Sources: final SEC IPO prospectuses and BLS CPI-U · Research snapshot: September 4, 2026 · Companion source: plot_ipo_value_vs_revenue.py.</text>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p7652fa8cd3">
+   <rect x="86.4" y="115.2" width="725.76" height="299.52"/>
+  </clipPath>
+ </defs>
+</svg>
